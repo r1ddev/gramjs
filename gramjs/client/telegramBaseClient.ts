@@ -131,6 +131,10 @@ export interface TelegramClientParams {
      * What type of network connection to use (Normal Socket (for node) or Websockets (for browsers usually) )
      */
     networkSocket?: typeof PromisedNetSockets | typeof PromisedWebSockets;
+    /**
+     * The path to the entity cache folder.
+     */
+    cacheDir?: string;
 }
 
 const clientParamsDefault = {
@@ -321,7 +325,7 @@ export abstract class TelegramBaseClient {
                 "Cannot use SSL with proxies. You need to disable the useWSS client param in TelegramClient"
             );
         }
-        this._entityCache = new EntityCache();
+        this._entityCache = new EntityCache(clientParams.cacheDir);
         // These will be set later
         this._config = undefined;
         this._loopStarted = false;
@@ -419,6 +423,9 @@ export abstract class TelegramBaseClient {
         ]);
 
         this._eventBuilders = [];
+        console.log("TelegramBaseClient call destroy");
+        
+        // this._entityCache
     }
 
     /** @hidden */
