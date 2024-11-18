@@ -126,7 +126,9 @@ function readBufferFromBigInt(bigIntVar, bytesNumber, little = true, signed = fa
         throw new Error("Cannot convert to unsigned");
     }
     if (signed && bigIntVar.lesser((0, big_integer_1.default)(0))) {
-        bigIntVar = (0, big_integer_1.default)(2).pow((0, big_integer_1.default)(bytesNumber).multiply(8)).add(bigIntVar);
+        bigIntVar = (0, big_integer_1.default)(2)
+            .pow((0, big_integer_1.default)(bytesNumber).multiply(8))
+            .add(bigIntVar);
     }
     const hex = bigIntVar.toString(16).padStart(bytesNumber * 2, "0");
     let buffer = Buffer.from(hex, "hex");

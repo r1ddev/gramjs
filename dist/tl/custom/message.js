@@ -461,7 +461,7 @@ class CustomMessage extends senderGetter_1.SenderGetter {
     }
     async edit(params) {
         const param = params;
-        if (this.fwdFrom || !this.out || !this._client)
+        if (this.fwdFrom || !this._client)
             return undefined;
         if (param.linkPreview == undefined) {
             param.linkPreview = !!this.webPreview;
@@ -552,7 +552,7 @@ class CustomMessage extends senderGetter_1.SenderGetter {
                     }
                     else {
                         for (const answer of answers) {
-                            if (answer.text == text) {
+                            if (answer.text.text == text) {
                                 return [answer.option];
                             }
                         }

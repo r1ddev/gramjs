@@ -111,6 +111,10 @@ export interface TelegramClientParams {
      * What type of network connection to use (Normal Socket (for node) or Websockets (for browsers usually) )
      */
     networkSocket?: typeof PromisedNetSockets | typeof PromisedWebSockets;
+    /**
+     * The path to the entity cache folder.
+     */
+    cacheDir?: string;
 }
 export declare abstract class TelegramBaseClient {
     /** The current gramJS version. */
@@ -167,7 +171,7 @@ export declare abstract class TelegramBaseClient {
     /** @hidden */
     _ALBUMS: Map<string, [Timeout, Api.TypeUpdate[]]>;
     /** @hidden */
-    private _exportedSenderPromises;
+    _exportedSenderPromises: Map<number, Promise<MTProtoSender>>;
     /** @hidden */
     private _exportedSenderReleaseTimeouts;
     /** @hidden */

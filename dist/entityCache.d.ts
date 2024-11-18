@@ -1,7 +1,18 @@
 import bigInt from "big-integer";
+declare type Entity = Record<string, any>;
 export declare class EntityCache {
     private cacheMap;
-    constructor();
+    private _cacheFile;
+    private _writer;
+    private _preparedEntities;
+    constructor(cacheDir?: string);
     add(entities: any): void;
     get(item: bigInt.BigInteger | string | undefined): any;
+    saveEntity(key: string, entity: Entity): void;
+    private restore;
+    private load;
+    private makeCache;
+    private prepareEntity;
+    private parseCacheEntity;
 }
+export {};

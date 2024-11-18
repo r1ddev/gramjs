@@ -49,7 +49,6 @@ const clientParamsDefault = {
 };
 class TelegramBaseClient {
     constructor(session, apiId, apiHash, clientParams) {
-        var _a;
         /** The current gramJS version. */
         this.__version__ = __1.version;
         /** @hidden */
@@ -95,7 +94,7 @@ class TelegramBaseClient {
         }
         this._connection = clientParams.connection;
         let initProxy;
-        if ((_a = this._proxy) === null || _a === void 0 ? void 0 : _a.MTProxy) {
+        if (this._proxy && "MTProxy" in this._proxy) {
             this._connection = TCPMTProxy_1.ConnectionTCPMTProxyAbridged;
             initProxy = new tl_1.Api.InputClientProxy({
                 address: this._proxy.ip,
@@ -122,7 +121,7 @@ class TelegramBaseClient {
         if (this.useWSS && this._proxy) {
             throw new Error("Cannot use SSL with proxies. You need to disable the useWSS client param in TelegramClient");
         }
-        this._entityCache = new entityCache_1.EntityCache();
+        this._entityCache = new entityCache_1.EntityCache(clientParams.cacheDir);
         // These will be set later
         this._config = undefined;
         this._loopStarted = false;
@@ -198,6 +197,8 @@ class TelegramBaseClient {
             }),
         ]);
         this._eventBuilders = [];
+        console.log("TelegramBaseClient call destroy");
+        // this._entityCache
     }
     /** @hidden */
     async _authKeyCallback(authKey, dcId) {
@@ -296,7 +297,14 @@ class TelegramBaseClient {
         }
         this._exportedSenderReleaseTimeouts.set(dcId, setTimeout(() => {
             this._exportedSenderReleaseTimeouts.delete(dcId);
-            sender.disconnect();
+            if (sender._pendingState.values().length) {
+                console.log("sender already has some hanging states. reconnecting");
+                sender._reconnect();
+                this._borrowExportedSender(dcId, false, sender);
+            }
+            else {
+                sender.disconnect();
+            }
         }, EXPORTED_SENDER_RELEASE_TIMEOUT));
         return sender;
     }
@@ -314,6 +322,7 @@ class TelegramBaseClient {
             onConnectionBreak: this._cleanupExportedSender.bind(this),
             client: this,
             securityChecks: this._securityChecks,
+            _exportedSenderPromises: this._exportedSenderPromises,
         });
     }
     /** @hidden */
