@@ -802,6 +802,27 @@ class TelegramClient extends telegramBaseClient_1.TelegramBaseClient {
     getParticipants(entity, params = {}) {
         return chatMethods.getParticipants(this, entity, params);
     }
+    /**
+     * Kicks a user from a chat.
+     *
+     * Kicking yourself (`'me'`) will result in leaving the chat.
+     *
+     * @note
+     * Attempting to kick someone who was banned will remove their
+     * restrictions (and thus unbanning them), since kicking is just
+     * ban + unban.
+     *
+     * @example
+     * // Kick some user from some chat, and deleting the service message
+     * const msg = await client.kickParticipant(chat, user);
+     * await msg.delete();
+     *
+     * // Leaving chat
+     * await client.kickParticipant(chat, 'me');
+     */
+    kickParticipant(entity, participant) {
+        return chatMethods.kickParticipant(this, entity, participant);
+    }
     //endregion
     //region updates
     /** TODO */
@@ -920,17 +941,6 @@ class TelegramClient extends telegramBaseClient_1.TelegramBaseClient {
     invokeWithSender(request, sender) {
         return userMethods.invoke(this, request, undefined, sender);
     }
-    /**
-     * Gets the current logged in {@link Api.User}.
-     * If the user has not logged in this will throw an error.
-     * @param inputPeer - Whether to return the input peer version {@link Api.InputPeerUser} or the whole user {@link Api.User}.
-     * @return Your own {@link Api.User}
-     * @example
-     * ```ts
-     * const me = await client.getMe();
-     * console.log("My username is",me.username);
-     * ```
-     */
     getMe(inputPeer = false) {
         return userMethods.getMe(this, inputPeer);
     }
@@ -1058,6 +1068,7 @@ class TelegramClient extends telegramBaseClient_1.TelegramBaseClient {
                 client: this,
                 securityChecks: this._securityChecks,
                 autoReconnectCallback: this._handleReconnect.bind(this),
+                _exportedSenderPromises: this._exportedSenderPromises,
             });
         }
         const connection = new this._connection({
