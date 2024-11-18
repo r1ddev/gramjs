@@ -97,7 +97,7 @@ async function invoke(client, request, dcId, otherSender) {
 }
 exports.invoke = invoke;
 /** @hidden */
-async function getMe(client, inputPeer = false) {
+async function getMe(client, inputPeer) {
     if (inputPeer && client._selfInputPeer) {
         return client._selfInputPeer;
     }
@@ -106,7 +106,9 @@ async function getMe(client, inputPeer = false) {
     if (!client._selfInputPeer) {
         client._selfInputPeer = __1.utils.getInputPeer(me, false);
     }
-    return inputPeer ? client._selfInputPeer : me;
+    return inputPeer
+        ? client._selfInputPeer
+        : me;
 }
 exports.getMe = getMe;
 /** @hidden */

@@ -19,6 +19,7 @@ import { RequestState } from "./RequestState";
 import { Connection, UpdateConnectionState } from "./";
 import type { TelegramClient } from "..";
 import { CancellablePromise } from "real-cancellable-promise";
+import { PendingState } from "../extensions/PendingState";
 interface DEFAULT_OPTIONS {
     logger: any;
     retries: number;
@@ -34,6 +35,7 @@ interface DEFAULT_OPTIONS {
     client: TelegramClient;
     onConnectionBreak?: CallableFunction;
     securityChecks: boolean;
+    _exportedSenderPromises: Map<number, Promise<MTProtoSender>>;
 }
 export declare class MTProtoSender {
     static DEFAULT_OPTIONS: {
@@ -71,7 +73,7 @@ export declare class MTProtoSender {
     readonly authKey: AuthKey;
     private readonly _state;
     private _sendQueue;
-    private _pendingState;
+    _pendingState: PendingState;
     private readonly _pendingAck;
     private readonly _lastAcks;
     private readonly _handlers;
@@ -85,6 +87,7 @@ export declare class MTProtoSender {
     private _cancelSend;
     cancellableRecvLoopPromise?: CancellablePromise<any>;
     private _finishedConnecting;
+    private _exportedSenderPromises;
     /**
      * @param authKey
      * @param opts
