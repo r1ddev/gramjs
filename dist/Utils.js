@@ -661,7 +661,7 @@ function isVideo(file) {
  */
 function getAttributes(file, { attributes = null, mimeType = undefined, forceDocument = false, voiceNote = false, videoNote = false, supportsStreaming = false, thumb = null, }) {
     var _a, _b, _c, _d;
-    const name = typeof file == "string" ? file : file.name || "unnamed";
+    const name = typeof file == "string" ? file : ("name" in file ? file.name : "unnamed");
     if (mimeType === undefined) {
         mimeType = mime_1.default.getType(name) || "application/octet-stream";
     }
