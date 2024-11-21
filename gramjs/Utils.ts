@@ -219,7 +219,7 @@ export function getInputPeer(
         return new Api.InputPeerChat({
             chatId: entity.chatId,
         });
-    }
+    }    
 
     _raiseCastFail(entity, "InputPeer");
 }
@@ -1188,7 +1188,7 @@ export function resolveId(
     bigInt.BigInteger,
     typeof Api.PeerUser | typeof Api.PeerChannel | typeof Api.PeerChat
 ] {
-    if (markedId.greaterOrEquals(bigInt.zero)) {
+    if (markedId.greaterOrEquals(bigInt.zero)) {        
         return [markedId, Api.PeerUser];
     }
 
@@ -1201,6 +1201,43 @@ export function resolveId(
         return [bigInt(m[1]), Api.PeerChannel];
     }
     return [markedId.negate(), Api.PeerChat];
+}
+
+export function parseEntity(
+    entityId: bigInt.BigInteger,
+    entity: Record<string, any>
+): Api.InputPeerUser | Api.InputPeerChannel | Api.InputPeerChat {
+
+    if (entityId.greaterOrEquals(bigInt.zero)) {
+        if (entity.userId && entity.accessHash) {
+            return new Api.InputPeerUser({
+                userId: entity.userId,
+                accessHash: entity.accessHash
+            });
+        } else {
+            _raiseCastFail(entity, "InputPeerUser");
+        }
+    }
+
+    const m = entityId.toString().match(/-100([^0]\d*)/);
+    if (m) {
+        if (entity.channelId && entity.accessHash) {
+            return new Api.InputPeerChannel({
+                channelId: entity.channelId,
+                accessHash: entity.accessHash
+            });
+        } else {
+            _raiseCastFail(entity, "InputPeerChannel");
+        }
+    }
+
+    if (entity.chatId && entity.accessHash) {
+        return new Api.InputPeerChat({
+            chatId: entity.chatId,
+        });
+    } else {
+        _raiseCastFail(entity, "InputPeerChat");
+    }
 }
 
 /**

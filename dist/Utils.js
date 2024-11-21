@@ -27,6 +27,7 @@ exports.getPeer = getPeer;
 exports.sanitizeParseMode = sanitizeParseMode;
 exports.getPeerId = getPeerId;
 exports.resolveId = resolveId;
+exports.parseEntity = parseEntity;
 exports.getMessageId = getMessageId;
 exports.parsePhone = parsePhone;
 exports.parseID = parseID;
@@ -1087,6 +1088,39 @@ function resolveId(markedId) {
         return [(0, big_integer_1.default)(m[1]), tl_1.Api.PeerChannel];
     }
     return [markedId.negate(), tl_1.Api.PeerChat];
+}
+function parseEntity(entityId, entity) {
+    if (entityId.greaterOrEquals(big_integer_1.default.zero)) {
+        if (entity.userId && entity.accessHash) {
+            return new tl_1.Api.InputPeerUser({
+                userId: entity.userId,
+                accessHash: entity.accessHash
+            });
+        }
+        else {
+            _raiseCastFail(entity, "InputPeerUser");
+        }
+    }
+    const m = entityId.toString().match(/-100([^0]\d*)/);
+    if (m) {
+        if (entity.channelId && entity.accessHash) {
+            return new tl_1.Api.InputPeerChannel({
+                channelId: entity.channelId,
+                accessHash: entity.accessHash
+            });
+        }
+        else {
+            _raiseCastFail(entity, "InputPeerChannel");
+        }
+    }
+    if (entity.chatId && entity.accessHash) {
+        return new tl_1.Api.InputPeerChat({
+            chatId: entity.chatId,
+        });
+    }
+    else {
+        _raiseCastFail(entity, "InputPeerChat");
+    }
 }
 /**
  * returns an entity pair
