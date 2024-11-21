@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { getInputPeer, getPeerId } from "./Utils";
+import { getInputPeer, getPeerId, parseEntity } from "./Utils";
 import { isArrayLike, returnBigInt } from "./Helpers";
 import { Api } from "./tl";
 import bigInt from "big-integer";
@@ -32,7 +32,7 @@ export class EntityCache {
         }
     }
 
-    async initCache(cacheDir: string) {
+    initCache(cacheDir: string) {
         if (!fs.existsSync(cacheDir)) {
             fs.mkdirSync(cacheDir, { recursive: true });
         }
@@ -43,7 +43,7 @@ export class EntityCache {
             fs.writeFileSync(this._cacheFile, "{}", "utf-8");
         }
 
-        this._writer = await getWriter(this._cacheFile);
+        // this._writer = await getWriter(this._cacheFile);
         this.restore();
     }
 
@@ -115,7 +115,8 @@ export class EntityCache {
     }
 
     saveEntity(key: string, entity: Entity) {
-        if (!this._writer) return;
+        // if (!this._writer) return;
+        if (!this._cacheFile) return;
 
         const startTime = performance.now();
 
@@ -123,14 +124,15 @@ export class EntityCache {
 
         const stringCache = JSON.stringify(this._preparedEntities);
 
-        this._writer.write(stringCache);
+        // this._writer.write(stringCache);
+        fs.writeFileSync(this._cacheFile, stringCache, "utf-8");
 
         const endTime = performance.now();
-        // console.log(`Cache saved in ${endTime - startTime} ms`);
+        console.log(`Cache saved in ${endTime - startTime} ms`);
     }
 
     private restore() {
-        if (!this._writer) return;
+        // if (!this._writer) return;
         if (!this._cacheFile) return;
 
         const startTime = performance.now();
@@ -149,19 +151,12 @@ export class EntityCache {
         const cache = JSON.parse(jsonCache);
         if (typeof cache == "object") {
             for (const entityId in cache) {
-                mapCache.set(entityId, this.parseCacheEntity(cache[entityId]));
+                mapCache.set(entityId, this.parseCacheEntity(entityId, cache[entityId]));
+                this._preparedEntities[entityId] = cache[entityId];
             }
         }
 
         this.cacheMap = mapCache;
-    }
-
-    private makeCache() {
-        const jsonCache: any = {};
-        for (const [entityId, entity] of this.cacheMap.entries()) {
-            jsonCache[entityId] = this.prepareEntity(entity);
-        }
-        return JSON.stringify(jsonCache);
     }
 
     private prepareEntity(entity: Entity): PreparedEntity {
@@ -190,7 +185,7 @@ export class EntityCache {
         return entity;
     }
 
-    private parseCacheEntity(entity: PreparedEntity): Entity {
+    private parseCacheEntity(entityId: string, entity: PreparedEntity): Entity {
         const parsedEntity: any = {};
 
         if (typeof entity == "object") {
@@ -212,7 +207,7 @@ export class EntityCache {
                 }
             }
 
-            return parsedEntity;
+            return parseEntity(returnBigInt(entityId), parsedEntity);
         }
 
         return entity;

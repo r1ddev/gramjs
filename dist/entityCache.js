@@ -25,7 +25,7 @@ class EntityCache {
             this.initCache(cacheDir);
         }
     }
-    async initCache(cacheDir) {
+    initCache(cacheDir) {
         if (!fs_1.default.existsSync(cacheDir)) {
             fs_1.default.mkdirSync(cacheDir, { recursive: true });
         }
@@ -33,7 +33,7 @@ class EntityCache {
         if (!fs_1.default.existsSync(this._cacheFile)) {
             fs_1.default.writeFileSync(this._cacheFile, "{}", "utf-8");
         }
-        this._writer = await getWriter(this._cacheFile);
+        // this._writer = await getWriter(this._cacheFile);
         this.restore();
     }
     add(entities) {
@@ -101,18 +101,19 @@ class EntityCache {
         throw new Error("No cached entity for the given key");
     }
     saveEntity(key, entity) {
-        if (!this._writer)
+        // if (!this._writer) return;
+        if (!this._cacheFile)
             return;
         const startTime = perf_hooks_1.performance.now();
         this._preparedEntities[key] = this.prepareEntity(entity);
         const stringCache = JSON.stringify(this._preparedEntities);
-        this._writer.write(stringCache);
+        // this._writer.write(stringCache);
+        fs_1.default.writeFileSync(this._cacheFile, stringCache, "utf-8");
         const endTime = perf_hooks_1.performance.now();
-        // console.log(`Cache saved in ${endTime - startTime} ms`);
+        console.log(`Cache saved in ${endTime - startTime} ms`);
     }
     restore() {
-        if (!this._writer)
-            return;
+        // if (!this._writer) return;
         if (!this._cacheFile)
             return;
         const startTime = perf_hooks_1.performance.now();
@@ -126,17 +127,11 @@ class EntityCache {
         const cache = JSON.parse(jsonCache);
         if (typeof cache == "object") {
             for (const entityId in cache) {
-                mapCache.set(entityId, this.parseCacheEntity(cache[entityId]));
+                mapCache.set(entityId, this.parseCacheEntity(entityId, cache[entityId]));
+                this._preparedEntities[entityId] = cache[entityId];
             }
         }
         this.cacheMap = mapCache;
-    }
-    makeCache() {
-        const jsonCache = {};
-        for (const [entityId, entity] of this.cacheMap.entries()) {
-            jsonCache[entityId] = this.prepareEntity(entity);
-        }
-        return JSON.stringify(jsonCache);
     }
     prepareEntity(entity) {
         if (typeof entity == "object") {
@@ -161,7 +156,7 @@ class EntityCache {
         }
         return entity;
     }
-    parseCacheEntity(entity) {
+    parseCacheEntity(entityId, entity) {
         const parsedEntity = {};
         if (typeof entity == "object") {
             for (const key in entity) {
@@ -179,7 +174,7 @@ class EntityCache {
                         break;
                 }
             }
-            return parsedEntity;
+            return (0, Utils_1.parseEntity)((0, Helpers_1.returnBigInt)(entityId), parsedEntity);
         }
         return entity;
     }

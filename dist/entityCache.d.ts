@@ -6,13 +6,12 @@ export declare class EntityCache {
     private _writer;
     private _preparedEntities;
     constructor(cacheDir?: string);
-    initCache(cacheDir: string): Promise<void>;
+    initCache(cacheDir: string): void;
     add(entities: any): void;
     get(item: bigInt.BigInteger | string | undefined): any;
     saveEntity(key: string, entity: Entity): void;
     private restore;
     private load;
-    private makeCache;
     private prepareEntity;
     private parseCacheEntity;
 }
