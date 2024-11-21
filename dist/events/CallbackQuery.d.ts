@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { EntityLike } from "../define";
 import { EventBuilder, EventCommonSender } from "./common";
 import { Api } from "../tl";

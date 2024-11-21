@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import type { ButtonLike, EntityLike } from "../../define";
 import { Api } from "../api";
 import { inspect } from "../../inspect";
@@ -11,7 +10,7 @@ export declare class Button {
         [key: string]: any;
     };
     constructor(button: Api.TypeKeyboardButton, resize?: boolean, singleUse?: boolean, selective?: boolean);
-    static _isInline(button: ButtonLike): boolean;
+    static _isInline(button: ButtonLike): button is Api.KeyboardButtonUrl | Api.KeyboardButtonCallback | Api.KeyboardButtonSwitchInline | Api.KeyboardButtonUrlAuth | Api.InputKeyboardButtonUrlAuth;
     static inline(text: string, data?: Buffer): Api.KeyboardButtonCallback;
     static switchInline(text: string, query?: string, samePeer?: boolean): Api.KeyboardButtonSwitchInline;
     static url(text: string, url?: string): Api.KeyboardButtonUrl;

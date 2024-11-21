@@ -10,7 +10,9 @@ import { UpdateConnectionState } from "../network";
 export declare class StopPropagation extends Error {
 }
 /** @hidden */
-export declare function on(client: TelegramClient, event?: EventBuilder): (f: (event: any) => void) => (event: any) => void;
+export declare function on(client: TelegramClient, event?: EventBuilder): (f: {
+    (event: any): void;
+}) => (event: any) => void;
 /** @hidden */
 export declare function addEventHandler(client: TelegramClient, callback: CallableFunction, event?: EventBuilder): void;
 /** @hidden */

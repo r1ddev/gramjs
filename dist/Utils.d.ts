@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import type { Entity, EntityLike, MessageIDLike } from "./define";
 import { Api } from "./tl";
 import bigInt from "big-integer";

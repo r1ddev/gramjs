@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { TelegramBaseClient, TelegramClientParams } from "./telegramBaseClient";
 import * as authMethods from "./auth";
 import * as downloadMethods from "./downloads";
@@ -754,7 +753,9 @@ export declare class TelegramClient extends TelegramBaseClient {
      */
     kickParticipant(entity: EntityLike, participant: EntityLike): Promise<Api.TypeMessage | Map<number, Api.Message> | (Api.Message | undefined)[] | undefined>;
     /** TODO */
-    on(event: any): (f: (event: any) => void) => (event: any) => void;
+    on(event: any): (f: {
+        (event: any): void;
+    }) => (event: any) => void;
     /**
      * Registers a new event handler callback.<br/>
      * <br/>

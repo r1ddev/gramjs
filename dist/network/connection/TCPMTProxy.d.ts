@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { ObfuscatedConnection } from "./Connection";
 import { AbridgedPacketCodec } from "./TCPAbridged";
 import { Logger, PromisedNetSockets, PromisedWebSockets } from "../../extensions";
@@ -9,14 +8,14 @@ interface BasicProxyInterface {
     username?: string;
     password?: string;
 }
-export declare type MTProxyType = BasicProxyInterface & {
+export type MTProxyType = BasicProxyInterface & {
     secret: string;
     MTProxy: true;
 };
-export declare type SocksProxyType = BasicProxyInterface & {
+export type SocksProxyType = BasicProxyInterface & {
     socksType: 4 | 5;
 };
-export declare type ProxyInterface = MTProxyType | SocksProxyType;
+export type ProxyInterface = MTProxyType | SocksProxyType;
 declare class MTProxyIO {
     header?: Buffer;
     private connection;

@@ -6,11 +6,11 @@ const Utils_1 = require("../../Utils");
 const Helpers_1 = require("../../Helpers");
 const inspect_1 = require("../../inspect");
 class File {
-    constructor(media) {
-        this.media = media;
-    }
     [inspect_1.inspect.custom]() {
         return (0, Helpers_1.betterConsoleLog)(this);
+    }
+    constructor(media) {
+        this.media = media;
     }
     get id() {
         throw new Error("Unsupported");

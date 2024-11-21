@@ -6,6 +6,9 @@ const api_1 = require("../api");
 const Helpers_1 = require("../../Helpers");
 const inspect_1 = require("../../inspect");
 class Draft {
+    [inspect_1.inspect.custom]() {
+        return (0, Helpers_1.betterConsoleLog)(this);
+    }
     constructor(client, entity, draft) {
         this._client = client;
         this._peer = (0, Utils_1.getPeer)(entity);
@@ -31,9 +34,6 @@ class Draft {
                 }
             }
         }
-    }
-    [inspect_1.inspect.custom]() {
-        return (0, Helpers_1.betterConsoleLog)(this);
     }
     get entity() {
         return this._entity;

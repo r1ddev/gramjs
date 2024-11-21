@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { MemorySession } from "./Memory";
 export declare class StringSession extends MemorySession {
     _key?: Buffer;

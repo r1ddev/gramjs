@@ -3,7 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports._getResponseMessage = exports._parseMessageText = exports._replaceWithMention = exports.DEFAULT_DELIMITERS = void 0;
+exports.DEFAULT_DELIMITERS = void 0;
+exports._replaceWithMention = _replaceWithMention;
+exports._parseMessageText = _parseMessageText;
+exports._getResponseMessage = _getResponseMessage;
 const Utils_1 = require("../Utils");
 const api_1 = require("../tl/api");
 const index_1 = require("../index");
@@ -30,7 +33,6 @@ async function _replaceWithMention(client, entities, i, user) {
         return false;
     }
 }
-exports._replaceWithMention = _replaceWithMention;
 /** @hidden */
 async function _parseMessageText(client, message, parseMode) {
     if (parseMode == false) {
@@ -61,7 +63,6 @@ async function _parseMessageText(client, message, parseMode) {
     }
     return [rawMessage, msgEntities];
 }
-exports._parseMessageText = _parseMessageText;
 /** @hidden */
 function _getResponseMessage(client, request, result, inputChat) {
     let updates = [];
@@ -188,4 +189,3 @@ function _getResponseMessage(client, request, result, inputChat) {
     }
     return finalToReturn;
 }
-exports._getResponseMessage = _getResponseMessage;

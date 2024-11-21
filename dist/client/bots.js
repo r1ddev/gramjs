@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.inlineQuery = void 0;
+exports.inlineQuery = inlineQuery;
 const tl_1 = require("../tl");
 const inlineResults_1 = require("../tl/custom/inlineResults");
 var GetInlineBotResults = tl_1.Api.messages.GetInlineBotResults;
@@ -21,4 +21,3 @@ async function inlineQuery(client, bot, query, entity, offset, geoPoint) {
     }));
     return new inlineResults_1.InlineResults(client, result, entity ? peer : undefined);
 }
-exports.inlineQuery = inlineQuery;

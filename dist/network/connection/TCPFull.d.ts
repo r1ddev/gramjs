@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Connection, PacketCodec } from "./Connection";
 import type { PromisedNetSockets, PromisedWebSockets } from "../../extensions";
 export declare class FullPacketCodec extends PacketCodec {

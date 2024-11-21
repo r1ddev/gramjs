@@ -1,4 +1,3 @@
-/// <reference types="node" />
 declare class IGENEW {
     private ige;
     constructor(key: Buffer, iv: Buffer);

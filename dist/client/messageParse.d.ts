@@ -1,7 +1,7 @@
 import { Api } from "../tl/api";
 import type { EntityLike } from "../define";
 import type { TelegramClient } from "./TelegramClient";
-export declare type messageEntities = typeof Api.MessageEntityBold | typeof Api.MessageEntityItalic | typeof Api.MessageEntityStrike | typeof Api.MessageEntityCode | typeof Api.MessageEntityPre;
+export type messageEntities = typeof Api.MessageEntityBold | typeof Api.MessageEntityItalic | typeof Api.MessageEntityStrike | typeof Api.MessageEntityCode | typeof Api.MessageEntityPre;
 export declare const DEFAULT_DELIMITERS: {
     [key: string]: messageEntities;
 };

@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -19,7 +23,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports._authFlow = exports.signInBot = exports.signInWithPassword = exports.sendCode = exports.signInUserWithQrCode = exports.signInUser = exports.checkAuthorization = exports.start = void 0;
+exports.start = start;
+exports.checkAuthorization = checkAuthorization;
+exports.signInUser = signInUser;
+exports.signInUserWithQrCode = signInUserWithQrCode;
+exports.sendCode = sendCode;
+exports.signInWithPassword = signInWithPassword;
+exports.signInBot = signInBot;
+exports._authFlow = _authFlow;
 const tl_1 = require("../tl");
 const utils = __importStar(require("../Utils"));
 const Helpers_1 = require("../Helpers");
@@ -40,7 +51,6 @@ async function start(client, authParams) {
     };
     await _authFlow(client, apiCredentials, authParams);
 }
-exports.start = start;
 /** @hidden */
 async function checkAuthorization(client) {
     try {
@@ -51,7 +61,6 @@ async function checkAuthorization(client) {
         return false;
     }
 }
-exports.checkAuthorization = checkAuthorization;
 /** @hidden */
 async function signInUser(client, apiCredentials, authParams) {
     let phoneNumber;
@@ -172,7 +181,6 @@ async function signInUser(client, apiCredentials, authParams) {
     await authParams.onError(new Error("Auth failed"));
     return client.signInUser(apiCredentials, authParams);
 }
-exports.signInUser = signInUser;
 /** @hidden */
 async function signInUserWithQrCode(client, apiCredentials, authParams) {
     let isScanningComplete = false;
@@ -254,7 +262,6 @@ async function signInUserWithQrCode(client, apiCredentials, authParams) {
     await authParams.onError(new Error("QR auth failed"));
     throw new Error("QR auth failed");
 }
-exports.signInUserWithQrCode = signInUserWithQrCode;
 /** @hidden */
 async function sendCode(client, apiCredentials, phoneNumber, forceSMS = false) {
     try {
@@ -294,7 +301,6 @@ async function sendCode(client, apiCredentials, phoneNumber, forceSMS = false) {
         }
     }
 }
-exports.sendCode = sendCode;
 /** @hidden */
 async function signInWithPassword(client, apiCredentials, authParams) {
     let emptyPassword = false;
@@ -327,7 +333,6 @@ async function signInWithPassword(client, apiCredentials, authParams) {
     }
     return undefined; // Never reached (TypeScript fix)
 }
-exports.signInWithPassword = signInWithPassword;
 /** @hidden */
 async function signInBot(client, apiCredentials, authParams) {
     const { apiId, apiHash } = apiCredentials;
@@ -352,7 +357,6 @@ async function signInBot(client, apiCredentials, authParams) {
     })));
     return user;
 }
-exports.signInBot = signInBot;
 /** @hidden */
 async function _authFlow(client, apiCredentials, authParams) {
     const me = "phoneNumber" in authParams
@@ -360,4 +364,3 @@ async function _authFlow(client, apiCredentials, authParams) {
         : await client.signInBot(apiCredentials, authParams);
     client._log.info("Signed in successfully as " + utils.getDisplayName(me));
 }
-exports._authFlow = _authFlow;

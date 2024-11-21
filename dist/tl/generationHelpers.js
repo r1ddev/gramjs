@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.variableSnakeToCamelCase = exports.snakeToCamelCase = exports.CORE_TYPES = exports.fromLine = exports.buildArgConfig = exports.parseTl = exports.findAll = exports.serializeDate = exports.serializeBytes = void 0;
+exports.variableSnakeToCamelCase = exports.snakeToCamelCase = exports.CORE_TYPES = exports.fromLine = exports.parseTl = exports.findAll = void 0;
+exports.serializeBytes = serializeBytes;
+exports.serializeDate = serializeDate;
+exports.buildArgConfig = buildArgConfig;
 const Helpers_1 = require("../Helpers");
 const snakeToCamelCase = (name) => {
     const result = name.replace(/(?:^|_)([a-z])/g, (_, g) => g.toUpperCase());
@@ -10,24 +13,24 @@ exports.snakeToCamelCase = snakeToCamelCase;
 const variableSnakeToCamelCase = (str) => str.replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace("-", "").replace("_", ""));
 exports.variableSnakeToCamelCase = variableSnakeToCamelCase;
 const CORE_TYPES = new Set([
-    0xbc799737,
-    0x997275b5,
-    0x3fedd339,
-    0xc4b9f9bb,
+    0xbc799737, // boolFalse#bc799737 = Bool;
+    0x997275b5, // boolTrue#997275b5 = Bool;
+    0x3fedd339, // true#3fedd339 = True;
+    0xc4b9f9bb, // error#c4b9f9bb code:int text:string = Error;
     0x56730bcc, // null#56730bcc = Null;
 ]);
 exports.CORE_TYPES = CORE_TYPES;
 const AUTH_KEY_TYPES = new Set([
-    0x05162463,
-    0x83c95aec,
-    0xa9f55f95,
-    0x3c6a84d4,
-    0x56fddf88,
-    0xd0e8075c,
-    0xb5890dba,
-    0x6643b654,
-    0xd712e4be,
-    0xf5045f1f,
+    0x05162463, // resPQ,
+    0x83c95aec, // p_q_inner_data
+    0xa9f55f95, // p_q_inner_data_dc
+    0x3c6a84d4, // p_q_inner_data_temp
+    0x56fddf88, // p_q_inner_data_temp_dc
+    0xd0e8075c, // server_DH_params_ok
+    0xb5890dba, // server_DH_inner_data
+    0x6643b654, // client_DH_inner_data
+    0xd712e4be, // req_DH_params
+    0xf5045f1f, // set_client_DH_params
     0x3072cfa1, // gzip_packed
 ]);
 const fromLine = (line, isFunction) => {
@@ -165,7 +168,6 @@ function buildArgConfig(name, argType) {
     }
     return currentConfig;
 }
-exports.buildArgConfig = buildArgConfig;
 const parseTl = function* (content, layer, methods = [], ignoreIds = CORE_TYPES) {
     const methodInfo = (methods || []).reduce((o, m) => (Object.assign(Object.assign({}, o), { [m.name]: m })), {});
     const objAll = [];
@@ -271,7 +273,6 @@ function serializeBytes(data) {
     r.push(Buffer.alloc(padding).fill(0));
     return Buffer.concat(r);
 }
-exports.serializeBytes = serializeBytes;
 function serializeDate(dt) {
     if (!dt) {
         return Buffer.alloc(4).fill(0);
@@ -286,4 +287,3 @@ function serializeDate(dt) {
     }
     throw Error(`Cannot interpret "${dt}" as a date`);
 }
-exports.serializeDate = serializeDate;

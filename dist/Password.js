@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.computeDigest = exports.computeCheck = void 0;
+exports.computeCheck = computeCheck;
+exports.computeDigest = computeDigest;
 const tl_1 = require("./tl");
 const Helpers_1 = require("./Helpers");
 const big_integer_1 = __importDefault(require("big-integer"));
@@ -182,7 +183,6 @@ async function computeDigest(algo, password) {
     const value = (0, Helpers_1.modExp)((0, big_integer_1.default)(algo.g), (0, Helpers_1.readBigIntFromBuffer)(await computeHash(algo, password), false), (0, Helpers_1.readBigIntFromBuffer)(algo.p, false));
     return bigNumForHash(value);
 }
-exports.computeDigest = computeDigest;
 /**
  *
  * @param request {constructors.account.Password}
@@ -268,4 +268,3 @@ async function computeCheck(request, password) {
         M1: M1,
     });
 }
-exports.computeCheck = computeCheck;

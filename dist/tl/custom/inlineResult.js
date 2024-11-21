@@ -6,6 +6,9 @@ const Helpers_1 = require("../../Helpers");
 const inspect_1 = require("../../inspect");
 const Utils_1 = require("../../Utils");
 class InlineResult {
+    [inspect_1.inspect.custom]() {
+        return (0, Helpers_1.betterConsoleLog)(this);
+    }
     constructor(client, original, queryId, entity) {
         this._ARTICLE = "article";
         this._PHOTO = "photo";
@@ -22,9 +25,6 @@ class InlineResult {
         this.result = original;
         this._queryId = queryId;
         this._entity = entity;
-    }
-    [inspect_1.inspect.custom]() {
-        return (0, Helpers_1.betterConsoleLog)(this);
     }
     get type() {
         return this.result.type;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateTwoFaSettings = void 0;
+exports.updateTwoFaSettings = updateTwoFaSettings;
 const Helpers_1 = require("../Helpers");
 const Password_1 = require("../Password");
 const tl_1 = require("../tl");
@@ -106,4 +106,3 @@ async function updateTwoFaSettings(client, { isCheckPassword, currentPassword, n
         }
     }
 }
-exports.updateTwoFaSettings = updateTwoFaSettings;

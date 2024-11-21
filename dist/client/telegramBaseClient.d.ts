@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Connection } from "../";
 import { Session } from "../sessions";
 import { Logger, PromisedNetSockets, PromisedWebSockets } from "../extensions";

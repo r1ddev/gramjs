@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Api } from "../tl";
 import type { TelegramClient } from "./TelegramClient";
 /**

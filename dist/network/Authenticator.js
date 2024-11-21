@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.doAuthentication = void 0;
+exports.doAuthentication = doAuthentication;
 const Helpers_1 = require("../Helpers");
 const tl_1 = require("../tl");
 const errors_1 = require("../errors");
@@ -35,7 +35,7 @@ async function doAuthentication(sender, log) {
     bytes = (0, Helpers_1.generateRandomBytes)(32);
     const newNonce = (0, Helpers_1.readBigIntFromBuffer)(bytes, true, true);
     const pqInnerData = new tl_1.Api.PQInnerData({
-        pq: (0, Helpers_1.getByteArray)(pq),
+        pq: (0, Helpers_1.getByteArray)(pq), // unsigned
         p: pBuffer,
         q: qBuffer,
         nonce: resPQ.nonce,
@@ -146,7 +146,7 @@ async function doAuthentication(sender, log) {
     const clientDhInner = new tl_1.Api.ClientDHInnerData({
         nonce: resPQ.nonce,
         serverNonce: resPQ.serverNonce,
-        retryId: big_integer_1.default.zero,
+        retryId: big_integer_1.default.zero, // TODO Actual retry ID
         gB: (0, Helpers_1.getByteArray)(gb, false),
     }).getBytes();
     const clientDdhInnerHashed = Buffer.concat([
@@ -190,4 +190,3 @@ async function doAuthentication(sender, log) {
     log.debug("Finished authKey generation step 3");
     return { authKey, timeOffset };
 }
-exports.doAuthentication = doAuthentication;

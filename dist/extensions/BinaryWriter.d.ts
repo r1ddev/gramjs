@@ -1,4 +1,3 @@
-/// <reference types="node" />
 export declare class BinaryWriter {
     private readonly _buffers;
     constructor(stream: Buffer);

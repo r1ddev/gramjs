@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import bigInt from "big-integer";
 import type { EntityLike } from "./define";
 import type { Api } from "./tl";
@@ -25,7 +24,7 @@ export declare function betterConsoleLog(object: {
 /**
  * Helper to find if a given object is an array (or similar)
  */
-export declare const isArrayLike: <T>(x: any) => x is T[];
+export declare const isArrayLike: <T>(x: any) => x is Array<T>;
 /**
  * Special case signed little ints
  * @param big

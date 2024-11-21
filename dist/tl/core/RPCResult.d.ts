@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Api } from "../api";
 import type { BinaryReader } from "../../extensions";
 import bigInt from "big-integer";

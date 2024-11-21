@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildReplyMarkup = void 0;
+exports.buildReplyMarkup = buildReplyMarkup;
 const tl_1 = require("../tl");
 const button_1 = require("../tl/custom/button");
 const messageButton_1 = require("../tl/custom/messageButton");
@@ -84,4 +84,3 @@ function buildReplyMarkup(buttons, inlineOnly = false) {
         selective: selective,
     });
 }
-exports.buildReplyMarkup = buildReplyMarkup;

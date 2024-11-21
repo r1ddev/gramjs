@@ -3,7 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports._selfId = exports._getInputNotify = exports._getInputDialog = exports._getPeer = exports.getPeerId = exports._getEntityFromString = exports.getInputEntity = exports.getEntity = exports.isUserAuthorized = exports.isBot = exports.getMe = exports.invoke = void 0;
+exports.invoke = invoke;
+exports.getMe = getMe;
+exports.isBot = isBot;
+exports.isUserAuthorized = isUserAuthorized;
+exports.getEntity = getEntity;
+exports.getInputEntity = getInputEntity;
+exports._getEntityFromString = _getEntityFromString;
+exports.getPeerId = getPeerId;
+exports._getPeer = _getPeer;
+exports._getInputDialog = _getInputDialog;
+exports._getInputNotify = _getInputNotify;
+exports._selfId = _selfId;
 const tl_1 = require("../tl");
 const Utils_1 = require("../Utils");
 const Helpers_1 = require("../Helpers");
@@ -95,7 +106,6 @@ async function invoke(client, request, dcId, otherSender) {
     }
     throw new Error(`Request was unsuccessful ${attempt} time(s)`);
 }
-exports.invoke = invoke;
 /** @hidden */
 async function getMe(client, inputPeer) {
     if (inputPeer && client._selfInputPeer) {
@@ -110,7 +120,6 @@ async function getMe(client, inputPeer) {
         ? client._selfInputPeer
         : me;
 }
-exports.getMe = getMe;
 /** @hidden */
 async function isBot(client) {
     if (client._bot === undefined) {
@@ -121,7 +130,6 @@ async function isBot(client) {
     }
     return client._bot;
 }
-exports.isBot = isBot;
 /** @hidden */
 async function isUserAuthorized(client) {
     try {
@@ -132,7 +140,6 @@ async function isUserAuthorized(client) {
         return false;
     }
 }
-exports.isUserAuthorized = isUserAuthorized;
 /** @hidden */
 async function getEntity(client, entity) {
     const single = !(0, Helpers_1.isArrayLike)(entity);
@@ -213,7 +220,6 @@ async function getEntity(client, entity) {
     }
     return single ? result[0] : result;
 }
-exports.getEntity = getEntity;
 /** @hidden */
 async function getInputEntity(client, peer) {
     // Short-circuit if the input parameter directly maps to an InputPeer
@@ -330,7 +336,6 @@ async function getInputEntity(client, peer) {
         "docs.telethon.dev/en/stable/concepts/entities.html to" +
         " find out more details.");
 }
-exports.getInputEntity = getInputEntity;
 /** @hidden */
 async function _getEntityFromString(client, string) {
     const phone = __1.utils.parsePhone(string);
@@ -405,7 +410,6 @@ async function _getEntityFromString(client, string) {
     }
     throw new Error(`Cannot find any entity corresponding to "${string}"`);
 }
-exports._getEntityFromString = _getEntityFromString;
 /** @hidden */
 async function getPeerId(client, peer, addMark = true) {
     if (typeof peer == "string") {
@@ -430,7 +434,6 @@ async function getPeerId(client, peer, addMark = true) {
     }
     return __1.utils.getPeerId(peer, addMark);
 }
-exports.getPeerId = getPeerId;
 /** @hidden */
 async function _getPeer(client, peer) {
     if (!peer) {
@@ -443,7 +446,6 @@ async function _getPeer(client, peer) {
         chatId: i,
     });
 }
-exports._getPeer = _getPeer;
 /** @hidden */
 async function _getInputDialog(client, dialog) {
     try {
@@ -464,7 +466,6 @@ async function _getInputDialog(client, dialog) {
         peer: dialog,
     });
 }
-exports._getInputDialog = _getInputDialog;
 /** @hidden */
 async function _getInputNotify(client, notify) {
     try {
@@ -480,9 +481,7 @@ async function _getInputNotify(client, notify) {
         peer: await client.getInputEntity(notify),
     });
 }
-exports._getInputNotify = _getInputNotify;
 /** @hidden */
 function _selfId(client) {
     return client._selfInputPeer ? client._selfInputPeer.userId : undefined;
 }
-exports._selfId = _selfId;

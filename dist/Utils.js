@@ -3,7 +3,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDisplayName = exports.rtrim = exports.parseUsername = exports.resolveInviteLink = exports.parseID = exports.parsePhone = exports.getMessageId = exports.resolveId = exports.getPeerId = exports.sanitizeParseMode = exports.getPeer = exports.getAppropriatedPartSize = exports.getInputMedia = exports.getInputGeo = exports.getAttributes = exports.getExtension = exports.isImage = exports.isAudio = exports.getInputDocument = exports.getInputPhoto = exports.strippedPhotoToJpg = exports.getInputChatPhoto = exports.getInputMessage = exports.getInputUser = exports.getInputChannel = exports.getInnerText = exports._getEntityPair = exports._photoSizeByteCount = exports.getInputPeer = exports.chunks = exports.getFileInfo = void 0;
+exports.getFileInfo = getFileInfo;
+exports.chunks = chunks;
+exports.getInputPeer = getInputPeer;
+exports._photoSizeByteCount = _photoSizeByteCount;
+exports._getEntityPair = _getEntityPair;
+exports.getInnerText = getInnerText;
+exports.getInputChannel = getInputChannel;
+exports.getInputUser = getInputUser;
+exports.getInputMessage = getInputMessage;
+exports.getInputChatPhoto = getInputChatPhoto;
+exports.strippedPhotoToJpg = strippedPhotoToJpg;
+exports.getInputPhoto = getInputPhoto;
+exports.getInputDocument = getInputDocument;
+exports.isAudio = isAudio;
+exports.isImage = isImage;
+exports.getExtension = getExtension;
+exports.getAttributes = getAttributes;
+exports.getInputGeo = getInputGeo;
+exports.getInputMedia = getInputMedia;
+exports.getAppropriatedPartSize = getAppropriatedPartSize;
+exports.getPeer = getPeer;
+exports.sanitizeParseMode = sanitizeParseMode;
+exports.getPeerId = getPeerId;
+exports.resolveId = resolveId;
+exports.getMessageId = getMessageId;
+exports.parsePhone = parsePhone;
+exports.parseID = parseID;
+exports.resolveInviteLink = resolveInviteLink;
+exports.parseUsername = parseUsername;
+exports.rtrim = rtrim;
+exports.getDisplayName = getDisplayName;
 const tl_1 = require("./tl");
 const big_integer_1 = __importDefault(require("big-integer"));
 const mime_1 = __importDefault(require("mime"));
@@ -56,7 +86,6 @@ function getFileInfo(fileLocation) {
     }
     _raiseCastFail(fileLocation, "InputFileLocation");
 }
-exports.getFileInfo = getFileInfo;
 /**
  * Turns the given iterable into chunks of the specified size,
  * which is 100 by default since that's what Telegram uses the most.
@@ -66,7 +95,6 @@ function* chunks(arr, size = 100) {
         yield arr.slice(i, i + size);
     }
 }
-exports.chunks = chunks;
 const html_1 = require("./extensions/html");
 const Helpers_1 = require("./Helpers");
 const USERNAME_RE = new RegExp("@|(?:https?:\\/\\/)?(?:www\\.)?" +
@@ -184,7 +212,6 @@ function getInputPeer(entity, allowSelf = true, checkHash = true) {
     }
     _raiseCastFail(entity, "InputPeer");
 }
-exports.getInputPeer = getInputPeer;
 function _photoSizeByteCount(size) {
     if (size instanceof tl_1.Api.PhotoSize) {
         return size.size;
@@ -208,7 +235,6 @@ function _photoSizeByteCount(size) {
         return undefined;
     }
 }
-exports._photoSizeByteCount = _photoSizeByteCount;
 function _getEntityPair(entityId, entities, cache, getInputPeerFunction = getInputPeer) {
     const entity = entities.get(entityId);
     let inputEntity;
@@ -223,7 +249,6 @@ function _getEntityPair(entityId, entities, cache, getInputPeerFunction = getInp
     }
     return [entity, inputEntity];
 }
-exports._getEntityPair = _getEntityPair;
 function getInnerText(text, entities) {
     const result = [];
     entities.forEach(function (value, key) {
@@ -233,7 +258,6 @@ function getInnerText(text, entities) {
     });
     return result;
 }
-exports.getInnerText = getInnerText;
 /**
  Similar to :meth:`get_input_peer`, but for :tl:`InputChannel`'s alone.
 
@@ -275,7 +299,6 @@ function getInputChannel(entity) {
     }
     _raiseCastFail(entity, "InputChannel");
 }
-exports.getInputChannel = getInputChannel;
 /**
  Similar to :meth:`getInputPeer`, but for :tl:`InputUser`'s alone.
 
@@ -337,7 +360,6 @@ function getInputUser(entity) {
     }
     _raiseCastFail(entity, "InputUser");
 }
-exports.getInputUser = getInputUser;
 /**
  Similar to :meth:`get_input_peer`, but for dialogs
  * @param dialog
@@ -384,7 +406,6 @@ function getInputMessage(message) {
     }
     _raiseCastFail(message, "InputMessage");
 }
-exports.getInputMessage = getInputMessage;
 /**
  *  Similar to :meth:`get_input_peer`, but for input messages.
  */
@@ -413,7 +434,6 @@ function getInputChatPhoto(photo) {
     }
     _raiseCastFail(photo, "InputChatPhoto");
 }
-exports.getInputChatPhoto = getInputChatPhoto;
 /**
  * Adds the JPG header and footer to a stripped image.
  * Ported from https://github.com/telegramdesktop/tdesktop/blob/bec39d89e19670eb436dc794a8f20b657cb87c71/Telegram/SourceFiles/ui/image/image.cpp#L225
@@ -431,7 +451,6 @@ function strippedPhotoToJpg(stripped) {
     header[166] = stripped[2];
     return Buffer.concat([header, stripped.slice(3), JPEG_FOOTER]);
 }
-exports.strippedPhotoToJpg = strippedPhotoToJpg;
 /*CONTEST
 function getInputLocation(location) {
     try {
@@ -538,7 +557,6 @@ function getInputPhoto(photo) {
     }
     _raiseCastFail(photo, "InputPhoto");
 }
-exports.getInputPhoto = getInputPhoto;
 /**
  *  Similar to :meth:`get_input_peer`, but for documents
  */
@@ -567,7 +585,6 @@ function getInputDocument(document) {
     }
     _raiseCastFail(document, "InputDocument");
 }
-exports.getInputDocument = getInputDocument;
 /**
  *  Returns `True` if the file has an audio mime type.
  */
@@ -582,7 +599,6 @@ function isAudio(file) {
         return (mime_1.default.getType(file) || "").startsWith("audio/");
     }
 }
-exports.isAudio = isAudio;
 /**
  *  Returns `True` if the file has an image mime type.
  */
@@ -590,7 +606,6 @@ function isImage(file) {
     const ext = _getExtension(file).toLowerCase();
     return (ext.endsWith(".png") || ext.endsWith(".jpg") || ext.endsWith(".jpeg"));
 }
-exports.isImage = isImage;
 function getExtension(media) {
     // Photos are always compressed as .jpg by Telegram
     try {
@@ -618,7 +633,6 @@ function getExtension(media) {
     }
     return "";
 }
-exports.getExtension = getExtension;
 /**
  * Gets the extension for the given file, which can be either a
  * str or an ``open()``'ed file (which has a ``.name`` attribute).
@@ -729,7 +743,6 @@ function getAttributes(file, { attributes = null, mimeType = undefined, forceDoc
         mimeType: mimeType,
     };
 }
-exports.getAttributes = getAttributes;
 /**
  *  Similar to :meth:`get_input_peer`, but for geo points
  */
@@ -755,7 +768,6 @@ function getInputGeo(geo) {
     }
     _raiseCastFail(geo, "InputGeoPoint");
 }
-exports.getInputGeo = getInputGeo;
 /**
  *
  Similar to :meth:`get_input_peer`, but for media.
@@ -906,7 +918,6 @@ function getInputMedia(media, { isPhoto = false, attributes = undefined, forceDo
     }
     _raiseCastFail(media, "InputMedia");
 }
-exports.getInputMedia = getInputMedia;
 /**
  * Gets the appropriated part size when uploading or downloading files,
  * given an initial file size.
@@ -924,7 +935,6 @@ function getAppropriatedPartSize(fileSize) {
     }
     return 512;
 }
-exports.getAppropriatedPartSize = getAppropriatedPartSize;
 function getPeer(peer) {
     if (!peer) {
         _raiseCastFail(peer, "undefined");
@@ -986,7 +996,6 @@ function getPeer(peer) {
     catch (e) { }
     _raiseCastFail(peer, "peer");
 }
-exports.getPeer = getPeer;
 function sanitizeParseMode(mode) {
     if (mode === "md" || mode === "markdown") {
         return markdown_1.MarkdownParser;
@@ -1004,7 +1013,6 @@ function sanitizeParseMode(mode) {
     }
     throw new Error(`Invalid parse mode type ${mode}`);
 }
-exports.sanitizeParseMode = sanitizeParseMode;
 /**
  Convert the given peer into its marked ID by default.
 
@@ -1062,7 +1070,6 @@ function getPeerId(peer, addMark = true) {
     }
     _raiseCastFail(peer, "int");
 }
-exports.getPeerId = getPeerId;
 /**
  * Given a marked ID, returns the original ID and its :tl:`Peer` type.
  * @param markedId
@@ -1081,7 +1088,6 @@ function resolveId(markedId) {
     }
     return [markedId.negate(), tl_1.Api.PeerChat];
 }
-exports.resolveId = resolveId;
 /**
  * returns an entity pair
  * @param entityId
@@ -1124,7 +1130,6 @@ function getMessageId(message) {
         throw new Error(`Invalid message type: ${message.constructor.name}`);
     }
 }
-exports.getMessageId = getMessageId;
 /**
  * Parses the given phone, or returns `undefined` if it's invalid.
  * @param phone
@@ -1135,7 +1140,6 @@ function parsePhone(phone) {
         return !isNaN(Number(phone)) ? phone.replace("+", "") : undefined;
     }
 }
-exports.parsePhone = parsePhone;
 /**
  * Parses a string ID into a big int
  * @param id
@@ -1144,11 +1148,9 @@ function parseID(id) {
     const isValid = /^(-?[0-9][0-9]*)$/.test(id);
     return isValid ? (0, big_integer_1.default)(id) : undefined;
 }
-exports.parseID = parseID;
 function resolveInviteLink(link) {
     throw new Error("not implemented");
 }
-exports.resolveInviteLink = resolveInviteLink;
 /**
  Parses the given username or channel access hash, given
  a string, username or URL. Returns a tuple consisting of
@@ -1187,14 +1189,12 @@ function parseUsername(username) {
         };
     }
 }
-exports.parseUsername = parseUsername;
 function rtrim(s, mask) {
     while (~mask.indexOf(s[s.length - 1])) {
         s = s.slice(0, -1);
     }
     return s;
 }
-exports.rtrim = rtrim;
 /**
  * Gets the display name for the given :tl:`User`,
  :tl:`Chat` or :tl:`Channel`. Returns an empty string otherwise
@@ -1220,7 +1220,6 @@ function getDisplayName(entity) {
     }
     return "";
 }
-exports.getDisplayName = getDisplayName;
 /**
  * check if a given item is an array like or not
  * @param item

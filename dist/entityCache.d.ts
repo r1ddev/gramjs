@@ -1,5 +1,5 @@
 import bigInt from "big-integer";
-declare type Entity = Record<string, any>;
+type Entity = Record<string, any>;
 export declare class EntityCache {
     private cacheMap;
     private _cacheFile;

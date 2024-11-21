@@ -7,7 +7,6 @@ import { isArrayLike, returnBigInt } from "./Helpers";
 import { Api } from "./tl";
 import bigInt from "big-integer";
 import { performance } from 'perf_hooks';
-import { type Writer } from 'steno';
 
 const cacheFileName = "cache.json";
 
@@ -15,13 +14,14 @@ type Entity = Record<string, any>;
 type PreparedEntity = Record<string, string | number>;
 
 const getWriter = async (outputFile: string) => {
-    return new (await import('steno')).Writer(outputFile);
+    const { Writer } = await import('steno');
+    return new Writer(outputFile);
 }
 
 export class EntityCache {
     private cacheMap: Map<string, any>;
     private _cacheFile: string | undefined;
-    private _writer: Writer | undefined;
+    private _writer: Awaited<ReturnType<typeof getWriter>> | undefined;
     private _preparedEntities: Record<string, PreparedEntity> = {};
 
     constructor(cacheDir?: string) {
@@ -38,6 +38,11 @@ export class EntityCache {
         }
 
         this._cacheFile = path.join(cacheDir, cacheFileName);
+
+        if (!fs.existsSync(this._cacheFile)) {
+            fs.writeFileSync(this._cacheFile, "{}", "utf-8");
+        }
+
         this._writer = await getWriter(this._cacheFile);
         this.restore();
     }

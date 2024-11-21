@@ -1,4 +1,3 @@
-/// <reference types="node" />
 export declare class MTProtoRequest {
     private sent;
     private sequence;

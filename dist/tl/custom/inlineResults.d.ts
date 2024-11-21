@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import type { TelegramClient } from "../..";
 import type { EntityLike } from "../../define";
 import { Api } from "../api";

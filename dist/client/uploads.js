@@ -3,7 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendFile = exports._sendAlbum = exports._fileToMedia = exports.uploadFile = exports.CustomFile = void 0;
+exports.CustomFile = void 0;
+exports.uploadFile = uploadFile;
+exports._fileToMedia = _fileToMedia;
+exports._sendAlbum = _sendAlbum;
+exports.sendFile = sendFile;
 const tl_1 = require("../tl");
 const Helpers_1 = require("../Helpers");
 const Utils_1 = require("../Utils");
@@ -159,7 +163,6 @@ async function uploadFile(client, fileParams) {
             md5Checksum: "", // This is not a "flag", so not sure if we can make it optional.
         });
 }
-exports.uploadFile = uploadFile;
 /** @hidden */
 async function _fileToMedia(client, { file, forceDocument, fileSize, progressCallback, attributes, thumb, voiceNote = false, videoNote = false, supportsStreaming = false, mimeType, asImage, workers = 1, }) {
     if (!file) {
@@ -314,7 +317,6 @@ async function _fileToMedia(client, { file, forceDocument, fileSize, progressCal
         image: asImage,
     };
 }
-exports._fileToMedia = _fileToMedia;
 /** @hidden */
 async function _sendAlbum(client, entity, { file, caption, forceDocument = false, fileSize, clearDraft = false, progressCallback, replyTo, attributes, thumb, parseMode, voiceNote = false, videoNote = false, silent, supportsStreaming = false, scheduleDate, workers = 1, noforwards, commentTo, topMsgId, }) {
     entity = await client.getInputEntity(entity);
@@ -412,7 +414,6 @@ async function _sendAlbum(client, entity, { file, caption, forceDocument = false
     const randomIds = albumFiles.map((m) => m.randomId);
     return client._getResponseMessage(randomIds, result, entity);
 }
-exports._sendAlbum = _sendAlbum;
 /** @hidden */
 async function sendFile(client, entity, { file, caption, forceDocument = false, fileSize, clearDraft = false, progressCallback, replyTo, attributes, thumb, parseMode, formattingEntities, voiceNote = false, videoNote = false, buttons, silent, supportsStreaming = false, scheduleDate, workers = 1, noforwards, commentTo, topMsgId, }) {
     if (!file) {
@@ -495,7 +496,6 @@ async function sendFile(client, entity, { file, caption, forceDocument = false, 
     const result = await client.invoke(request);
     return client._getResponseMessage(request, result, entity);
 }
-exports.sendFile = sendFile;
 function fileToBuffer(file) {
     if (typeof File !== "undefined" && file instanceof File) {
         return new Response(file).arrayBuffer();
