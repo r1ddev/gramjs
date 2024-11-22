@@ -1098,7 +1098,7 @@ function parseEntity(entityId, entity) {
             });
         }
         else {
-            _raiseCastFail(entity, "InputPeerUser");
+            return new tl_1.Api.InputPeerSelf();
         }
     }
     const m = entityId.toString().match(/-100([^0]\d*)/);
@@ -1110,7 +1110,7 @@ function parseEntity(entityId, entity) {
             });
         }
         else {
-            _raiseCastFail(entity, "InputPeerChannel");
+            return entity;
         }
     }
     if (entity.chatId && entity.accessHash) {
@@ -1119,7 +1119,7 @@ function parseEntity(entityId, entity) {
         });
     }
     else {
-        _raiseCastFail(entity, "InputPeerChat");
+        return entity;
     }
 }
 /**

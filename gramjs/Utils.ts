@@ -1206,8 +1206,7 @@ export function resolveId(
 export function parseEntity(
     entityId: bigInt.BigInteger,
     entity: Record<string, any>
-): Api.InputPeerUser | Api.InputPeerChannel | Api.InputPeerChat {
-
+): Api.InputPeerUser | Api.InputPeerChannel | Api.InputPeerChat | Api.InputPeerSelf | Record<string, any> {
     if (entityId.greaterOrEquals(bigInt.zero)) {
         if (entity.userId && entity.accessHash) {
             return new Api.InputPeerUser({
@@ -1215,7 +1214,7 @@ export function parseEntity(
                 accessHash: entity.accessHash
             });
         } else {
-            _raiseCastFail(entity, "InputPeerUser");
+            return new Api.InputPeerSelf();
         }
     }
 
@@ -1227,7 +1226,7 @@ export function parseEntity(
                 accessHash: entity.accessHash
             });
         } else {
-            _raiseCastFail(entity, "InputPeerChannel");
+            return entity;
         }
     }
 
@@ -1236,7 +1235,7 @@ export function parseEntity(
             chatId: entity.chatId,
         });
     } else {
-        _raiseCastFail(entity, "InputPeerChat");
+        return entity;
     }
 }
 

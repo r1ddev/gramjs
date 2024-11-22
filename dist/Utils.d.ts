@@ -177,7 +177,7 @@ export declare function resolveId(markedId: bigInt.BigInteger): [
     bigInt.BigInteger,
     typeof Api.PeerUser | typeof Api.PeerChannel | typeof Api.PeerChat
 ];
-export declare function parseEntity(entityId: bigInt.BigInteger, entity: Record<string, any>): Api.InputPeerUser | Api.InputPeerChannel | Api.InputPeerChat;
+export declare function parseEntity(entityId: bigInt.BigInteger, entity: Record<string, any>): Api.InputPeerUser | Api.InputPeerChannel | Api.InputPeerChat | Api.InputPeerSelf | Record<string, any>;
 /**
  * returns an entity pair
  * @param entityId
