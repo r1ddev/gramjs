@@ -7,6 +7,9 @@ const Helpers_1 = require("../../Helpers");
 const Utils_1 = require("../../Utils");
 const inspect_1 = require("../../inspect");
 class Forward extends senderGetter_1.SenderGetter {
+    [inspect_1.inspect.custom]() {
+        return (0, Helpers_1.betterConsoleLog)(this);
+    }
     constructor(client, original, entities) {
         super();
         // contains info for the original header sent by telegram.
@@ -39,9 +42,6 @@ class Forward extends senderGetter_1.SenderGetter {
             inputSender: inputSender,
         });
         this._client = client;
-    }
-    [inspect_1.inspect.custom]() {
-        return (0, Helpers_1.betterConsoleLog)(this);
     }
 }
 exports.Forward = Forward;

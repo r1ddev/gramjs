@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { SenderGetter } from "./senderGetter";
 import type { Entity, EntityLike } from "../../define";
 import { Api } from "../api";

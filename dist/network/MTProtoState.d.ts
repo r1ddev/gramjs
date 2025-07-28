@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import bigInt from "big-integer";
 import type { AuthKey } from "../crypto/AuthKey";
 import { TLMessage } from "../tl/core";

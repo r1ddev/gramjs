@@ -1,4 +1,3 @@
-/// <reference types="node" />
 export declare class Counter {
     _counter: Buffer;
     constructor(initialValue: any);

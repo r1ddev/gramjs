@@ -9,7 +9,7 @@ declare class CacheApi {
     _serverAddress: any;
     _port: any;
     save(): Promise<any>;
-    set authKey(arg: void);
+    set authKey(value: void);
     get authKey(): void;
     getAuthKey(dcId?: any): any;
     setAuthKey(authKey: any, dcId?: any): void;

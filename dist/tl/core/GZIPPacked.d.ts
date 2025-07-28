@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import type { BinaryReader } from "../../extensions";
 export declare class GZIPPacked {
     static CONSTRUCTOR_ID: number;

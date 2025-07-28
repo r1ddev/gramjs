@@ -3,14 +3,15 @@
  * Imported from https://github.com/spalt08/cryptography/blob/master/packages/aes/src/utils/words.ts
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.xor = exports.getWords = exports.s2i = void 0;
+exports.s2i = s2i;
+exports.getWords = getWords;
+exports.xor = xor;
 function s2i(str, pos) {
     return ((str.charCodeAt(pos) << 24) ^
         (str.charCodeAt(pos + 1) << 16) ^
         (str.charCodeAt(pos + 2) << 8) ^
         str.charCodeAt(pos + 3));
 }
-exports.s2i = s2i;
 /**
  * Helper function for transforming string key to Uint32Array
  */
@@ -40,9 +41,7 @@ function getWords(key) {
     }
     throw new Error("Unable to create 32-bit words");
 }
-exports.getWords = getWords;
 function xor(left, right, to = left) {
     for (let i = 0; i < left.length; i++)
         to[i] = left[i] ^ right[i];
 }
-exports.xor = xor;

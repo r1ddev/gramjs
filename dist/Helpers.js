@@ -3,7 +3,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports._entityType = exports._EntityType = exports.TotalList = exports.crc32 = exports.bufferXor = exports.sleep = exports.getRandomInt = exports.getMinBigInt = exports.returnBigInt = exports.getByteArray = exports.modExp = exports.sha256 = exports.sha1 = exports.convertToLittle = exports.generateKeyDataFromNonce = exports.stripText = exports.generateRandomBytes = exports.bigIntMod = exports.mod = exports.generateRandomLong = exports.readBufferFromBigInt = exports.toSignedLittleBuffer = exports.isArrayLike = exports.betterConsoleLog = exports.groupBy = exports.escapeRegex = exports.generateRandomBigInt = exports.readBigIntFromBuffer = void 0;
+exports._EntityType = exports.TotalList = exports.sleep = exports.isArrayLike = void 0;
+exports.readBigIntFromBuffer = readBigIntFromBuffer;
+exports.generateRandomBigInt = generateRandomBigInt;
+exports.escapeRegex = escapeRegex;
+exports.groupBy = groupBy;
+exports.betterConsoleLog = betterConsoleLog;
+exports.toSignedLittleBuffer = toSignedLittleBuffer;
+exports.readBufferFromBigInt = readBufferFromBigInt;
+exports.generateRandomLong = generateRandomLong;
+exports.mod = mod;
+exports.bigIntMod = bigIntMod;
+exports.generateRandomBytes = generateRandomBytes;
+exports.stripText = stripText;
+exports.generateKeyDataFromNonce = generateKeyDataFromNonce;
+exports.convertToLittle = convertToLittle;
+exports.sha1 = sha1;
+exports.sha256 = sha256;
+exports.modExp = modExp;
+exports.getByteArray = getByteArray;
+exports.returnBigInt = returnBigInt;
+exports.getMinBigInt = getMinBigInt;
+exports.getRandomInt = getRandomInt;
+exports.bufferXor = bufferXor;
+exports.crc32 = crc32;
+exports._entityType = _entityType;
 const big_integer_1 = __importDefault(require("big-integer"));
 const CryptoFile_1 = __importDefault(require("./CryptoFile"));
 const platform_1 = require("./platform");
@@ -26,15 +50,12 @@ function readBigIntFromBuffer(buffer, little = true, signed = false) {
     }
     return bigIntVar;
 }
-exports.readBigIntFromBuffer = readBigIntFromBuffer;
 function generateRandomBigInt() {
     return readBigIntFromBuffer(generateRandomBytes(8), false);
 }
-exports.generateRandomBigInt = generateRandomBigInt;
 function escapeRegex(string) {
     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 }
-exports.escapeRegex = escapeRegex;
 function groupBy(list, keyGetter) {
     const map = new Map();
     list.forEach((item) => {
@@ -49,7 +70,6 @@ function groupBy(list, keyGetter) {
     });
     return map;
 }
-exports.groupBy = groupBy;
 /**
  * Outputs the object in a better way by hiding all the private methods/attributes.
  * @param object - the class to use
@@ -65,7 +85,6 @@ function betterConsoleLog(object) {
     }
     return toPrint;
 }
-exports.betterConsoleLog = betterConsoleLog;
 /**
  * Helper to find if a given object is an array (or similar)
  */
@@ -106,7 +125,6 @@ function toSignedLittleBuffer(big, number = 8) {
     // smh hacks
     return Buffer.from(byteArray);
 }
-exports.toSignedLittleBuffer = toSignedLittleBuffer;
 /**
  * converts a big int to a buffer
  * @param bigIntVar {BigInteger}
@@ -137,7 +155,6 @@ function readBufferFromBigInt(bigIntVar, bytesNumber, little = true, signed = fa
     }
     return buffer;
 }
-exports.readBufferFromBigInt = readBufferFromBigInt;
 /**
  * Generates a random long integer (8 bytes), which is optionally signed
  * @returns {BigInteger}
@@ -145,7 +162,6 @@ exports.readBufferFromBigInt = readBufferFromBigInt;
 function generateRandomLong(signed = true) {
     return readBigIntFromBuffer(generateRandomBytes(8), true, signed);
 }
-exports.generateRandomLong = generateRandomLong;
 /**
  * .... really javascript
  * @param n {number}
@@ -155,7 +171,6 @@ exports.generateRandomLong = generateRandomLong;
 function mod(n, m) {
     return ((n % m) + m) % m;
 }
-exports.mod = mod;
 /**
  * returns a positive bigInt
  * @param n {bigInt.BigInteger}
@@ -165,7 +180,6 @@ exports.mod = mod;
 function bigIntMod(n, m) {
     return n.remainder(m).add(m).remainder(m);
 }
-exports.bigIntMod = bigIntMod;
 /**
  * Generates a random bytes array
  * @param count
@@ -174,7 +188,6 @@ exports.bigIntMod = bigIntMod;
 function generateRandomBytes(count) {
     return Buffer.from(CryptoFile_1.default.randomBytes(count));
 }
-exports.generateRandomBytes = generateRandomBytes;
 /**
  * Calculate the key based on Telegram guidelines, specifying whether it's the client or not
  * @param sharedKey
@@ -241,7 +254,6 @@ function stripText(text, entities) {
     }
     return text;
 }
-exports.stripText = stripText;
 /**
  * Generates the key data corresponding to the given nonces
  * @param serverNonceBigInt
@@ -267,7 +279,6 @@ async function generateKeyDataFromNonce(serverNonceBigInt, newNonceBigInt) {
         iv: ivBuffer,
     };
 }
-exports.generateKeyDataFromNonce = generateKeyDataFromNonce;
 function convertToLittle(buf) {
     const correct = Buffer.alloc(buf.length * 4);
     for (let i = 0; i < buf.length; i++) {
@@ -275,7 +286,6 @@ function convertToLittle(buf) {
     }
     return correct;
 }
-exports.convertToLittle = convertToLittle;
 /**
  * Calculates the SHA1 digest for the given data
  * @param data
@@ -287,7 +297,6 @@ function sha1(data) {
     // @ts-ignore
     return shaSum.digest();
 }
-exports.sha1 = sha1;
 /**
  * Calculates the SHA256 digest for the given data
  * @param data
@@ -299,7 +308,6 @@ function sha256(data) {
     // @ts-ignore
     return shaSum.digest();
 }
-exports.sha256 = sha256;
 /**
  * Fast mod pow for RSA calculation. a^b % n
  * @param a
@@ -323,7 +331,6 @@ function modExp(a, b, n) {
     }
     return result;
 }
-exports.modExp = modExp;
 /**
  * Gets the arbitrary-length byte array corresponding to the given integer
  * @param integer {number,BigInteger}
@@ -335,7 +342,6 @@ function getByteArray(integer, signed = false) {
     const byteLength = Math.floor((bits + 8 - 1) / 8);
     return readBufferFromBigInt(typeof integer == "number" ? (0, big_integer_1.default)(integer) : integer, byteLength, false, signed);
 }
-exports.getByteArray = getByteArray;
 function returnBigInt(num) {
     if (big_integer_1.default.isInstance(num)) {
         return num;
@@ -348,7 +354,6 @@ function returnBigInt(num) {
     }
     return (0, big_integer_1.default)(num);
 }
-exports.returnBigInt = returnBigInt;
 /**
  * Helper function to return the smaller big int in an array
  * @param arrayOfBigInts
@@ -368,7 +373,6 @@ function getMinBigInt(arrayOfBigInts) {
     }
     return smallest;
 }
-exports.getMinBigInt = getMinBigInt;
 /**
  * returns a random int from min (inclusive) and max (inclusive)
  * @param min
@@ -380,7 +384,6 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-exports.getRandomInt = getRandomInt;
 /**
  * Sleeps a specified amount of time
  * @param ms time in milliseconds
@@ -402,7 +405,6 @@ function bufferXor(a, b) {
     }
     return Buffer.from(res);
 }
-exports.bufferXor = bufferXor;
 // Taken from https://stackoverflow.com/questions/18638900/javascript-crc32/18639999#18639999
 function makeCRCTable() {
     let c;
@@ -431,7 +433,6 @@ function crc32(buf) {
     }
     return (crc ^ -1) >>> 0;
 }
-exports.crc32 = crc32;
 class TotalList extends Array {
     constructor() {
         super();
@@ -450,13 +451,13 @@ function _entityType(entity) {
         throw new Error(`${entity} is not a TLObject, cannot determine entity type`);
     }
     if (![
-        0x2d45687,
-        0xc91c90b6,
-        0xe669bf46,
-        0x40f202fd,
-        0x2da17977,
-        0xc5af5d94,
-        0x1f4661b9,
+        0x2d45687, // crc32('Peer')
+        0xc91c90b6, // crc32('InputPeer')
+        0xe669bf46, // crc32('InputUser')
+        0x40f202fd, // crc32('InputChannel')
+        0x2da17977, // crc32('User')
+        0xc5af5d94, // crc32('Chat')
+        0x1f4661b9, // crc32('UserFull')
         0xd49a2697, // crc32('ChatFull')
     ].includes(entity.SUBCLASS_OF_ID)) {
         throw new Error(`${entity} does not have any entity type`);
@@ -477,4 +478,3 @@ function _entityType(entity) {
     // 'Empty' in name or not found, we don't care, not a valid entity.
     throw new Error(`${entity} does not have any entity type`);
 }
-exports._entityType = _entityType;

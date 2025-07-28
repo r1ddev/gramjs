@@ -51,15 +51,17 @@ class ChatGetter {
         return this._inputChat;
     }
     async getInputChat() {
-        var e_1, _a;
+        var _a, e_1, _b, _c;
         if (!this.inputChat && this.chatId && this._client) {
             try {
                 const target = this.chatId;
                 try {
-                    for (var _b = __asyncValues(this._client.iterDialogs({
+                    for (var _d = true, _e = __asyncValues(this._client.iterDialogs({
                         limit: 100,
-                    })), _c; _c = await _b.next(), !_c.done;) {
-                        const dialog = _c.value;
+                    })), _f; _f = await _e.next(), _a = _f.done, !_a; _d = true) {
+                        _c = _f.value;
+                        _d = false;
+                        const dialog = _c;
                         if (dialog.id.eq(target)) {
                             this._chat = dialog.entity;
                             this._inputChat = dialog.inputEntity;
@@ -70,7 +72,7 @@ class ChatGetter {
                 catch (e_1_1) { e_1 = { error: e_1_1 }; }
                 finally {
                     try {
-                        if (_c && !_c.done && (_a = _b.return)) await _a.call(_b);
+                        if (!_d && !_a && (_b = _e.return)) await _b.call(_e);
                     }
                     finally { if (e_1) throw e_1.error; }
                 }

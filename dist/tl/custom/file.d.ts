@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import type { FileLike } from "../../define";
 import { inspect } from "../../inspect";
 export declare class File {

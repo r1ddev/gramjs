@@ -7,6 +7,9 @@ const draft_1 = require("./draft");
 const Helpers_1 = require("../../Helpers");
 const inspect_1 = require("../../inspect");
 class Dialog {
+    [inspect_1.inspect.custom]() {
+        return (0, Helpers_1.betterConsoleLog)(this);
+    }
     constructor(client, dialog, entities, message) {
         this._client = client;
         this.dialog = dialog;
@@ -32,9 +35,6 @@ class Dialog {
             this.entity instanceof api_1.Api.ChatForbidden ||
             (this.entity instanceof api_1.Api.Channel && this.entity.megagroup));
         this.isChannel = this.entity instanceof api_1.Api.Channel;
-    }
-    [inspect_1.inspect.custom]() {
-        return (0, Helpers_1.betterConsoleLog)(this);
     }
 }
 exports.Dialog = Dialog;

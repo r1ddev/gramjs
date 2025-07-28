@@ -3,7 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EventCommonSender = exports.EventCommon = exports.EventBuilder = exports._intoIdSet = void 0;
+exports.EventCommonSender = exports.EventCommon = exports.EventBuilder = void 0;
+exports._intoIdSet = _intoIdSet;
 const tl_1 = require("../tl");
 const custom_1 = require("../tl/custom");
 const Helpers_1 = require("../Helpers");
@@ -55,7 +56,6 @@ async function _intoIdSet(client, chats) {
     }
     return Array.from(result);
 }
-exports._intoIdSet = _intoIdSet;
 /**
  * The common event builder, with builtin support to filter per chat.<br/>
  * All events inherit this.

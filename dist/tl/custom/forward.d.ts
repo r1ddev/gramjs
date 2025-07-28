@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { ChatGetter } from "./chatGetter";
 import { SenderGetter } from "./senderGetter";
 import { Api } from "../api";

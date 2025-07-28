@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import bigInt from "big-integer";
 import Deferred from "../extensions/Deferred";
 import { Api } from "../tl";

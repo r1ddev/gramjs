@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -29,7 +33,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.downloadProfilePhoto = exports._downloadPhoto = exports._downloadCachedPhotoSize = exports._downloadWebDocument = exports._downloadContact = exports._downloadDocument = exports.downloadMedia = exports.downloadFileV2 = exports.iterDownload = exports.GenericDownloadIter = exports.DirectDownloadIter = void 0;
+exports.GenericDownloadIter = exports.DirectDownloadIter = void 0;
+exports.iterDownload = iterDownload;
+exports.downloadFileV2 = downloadFileV2;
+exports.downloadMedia = downloadMedia;
+exports._downloadDocument = _downloadDocument;
+exports._downloadContact = _downloadContact;
+exports._downloadWebDocument = _downloadWebDocument;
+exports._downloadCachedPhotoSize = _downloadCachedPhotoSize;
+exports._downloadPhoto = _downloadPhoto;
+exports.downloadProfilePhoto = downloadProfilePhoto;
 const tl_1 = require("../tl");
 const Utils_1 = require("../Utils");
 const Helpers_1 = require("../Helpers");
@@ -223,7 +236,6 @@ function iterDownload(client, { file, offset = big_integer_1.default.zero, strid
         msgData,
     });
 }
-exports.iterDownload = iterDownload;
 function getWriter(outputFile) {
     if (!outputFile || Buffer.isBuffer(outputFile)) {
         return new extensions_1.BinaryWriter(Buffer.alloc(0));
@@ -256,7 +268,7 @@ function returnWriterValue(writer) {
 }
 /** @hidden */
 async function downloadFileV2(client, inputLocation, { outputFile = undefined, partSizeKb = undefined, fileSize = undefined, progressCallback = undefined, dcId = undefined, msgData = undefined, }) {
-    var e_1, _a;
+    var _a, e_1, _b, _c;
     if (!partSizeKb) {
         if (!fileSize) {
             partSizeKb = 64;
@@ -273,13 +285,15 @@ async function downloadFileV2(client, inputLocation, { outputFile = undefined, p
     let downloaded = big_integer_1.default.zero;
     try {
         try {
-            for (var _b = __asyncValues(iterDownload(client, {
+            for (var _d = true, _e = __asyncValues(iterDownload(client, {
                 file: inputLocation,
                 requestSize: partSize,
                 dcId: dcId,
                 msgData: msgData,
-            })), _c; _c = await _b.next(), !_c.done;) {
-                const chunk = _c.value;
+            })), _f; _f = await _e.next(), _a = _f.done, !_a; _d = true) {
+                _c = _f.value;
+                _d = false;
+                const chunk = _c;
                 await writer.write(chunk);
                 downloaded = downloaded.add(chunk.length);
                 if (progressCallback) {
@@ -290,7 +304,7 @@ async function downloadFileV2(client, inputLocation, { outputFile = undefined, p
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (_c && !_c.done && (_a = _b.return)) await _a.call(_b);
+                if (!_d && !_a && (_b = _e.return)) await _b.call(_e);
             }
             finally { if (e_1) throw e_1.error; }
         }
@@ -300,7 +314,6 @@ async function downloadFileV2(client, inputLocation, { outputFile = undefined, p
         closeWriter(writer);
     }
 }
-exports.downloadFileV2 = downloadFileV2;
 class Foreman {
     constructor(maxWorkers) {
         this.maxWorkers = maxWorkers;
@@ -378,7 +391,6 @@ async function downloadMedia(client, messageOrMedia, outputFile, thumb, progress
         return Buffer.alloc(0);
     }
 }
-exports.downloadMedia = downloadMedia;
 /** @hidden */
 async function _downloadDocument(client, doc, outputFile, date, thumb, progressCallback, msgData) {
     if (doc instanceof tl_1.Api.MessageMediaDocument) {
@@ -414,17 +426,14 @@ async function _downloadDocument(client, doc, outputFile, date, thumb, progressC
         msgData: msgData,
     });
 }
-exports._downloadDocument = _downloadDocument;
 /** @hidden */
 async function _downloadContact(client, media, args) {
     throw new Error("not implemented");
 }
-exports._downloadContact = _downloadContact;
 /** @hidden */
 async function _downloadWebDocument(client, media, args) {
     throw new Error("not implemented");
 }
-exports._downloadWebDocument = _downloadWebDocument;
 function pickFileSize(sizes, sizeType) {
     if (!sizeType || !sizes || !sizes.length) {
         return undefined;
@@ -505,7 +514,6 @@ async function _downloadCachedPhotoSize(size, outputFile) {
     }
     return returnWriterValue(writer);
 }
-exports._downloadCachedPhotoSize = _downloadCachedPhotoSize;
 /** @hidden */
 function getProperFilename(file, fileType, extension, date) {
     if (!file || typeof file != "string") {
@@ -560,7 +568,6 @@ async function _downloadPhoto(client, photo, file, date, thumb, progressCallback
         dcId: photo.dcId,
     });
 }
-exports._downloadPhoto = _downloadPhoto;
 /** @hidden */
 async function downloadProfilePhoto(client, entity, fileParams) {
     let photo;
@@ -595,4 +602,3 @@ async function downloadProfilePhoto(client, entity, fileParams) {
         dcId,
     });
 }
-exports.downloadProfilePhoto = downloadProfilePhoto;

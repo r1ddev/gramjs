@@ -5,6 +5,9 @@ const inlineResult_1 = require("./inlineResult");
 const Helpers_1 = require("../../Helpers");
 const inspect_1 = require("../../inspect");
 class InlineResults extends Array {
+    [inspect_1.inspect.custom]() {
+        return (0, Helpers_1.betterConsoleLog)(this);
+    }
     constructor(client, original, entity) {
         super(...original.results.map((res) => new inlineResult_1.InlineResult(client, res, original.queryId, entity)));
         this.result = original;
@@ -15,9 +18,6 @@ class InlineResults extends Array {
         this.gallery = Boolean(original.gallery);
         this.nextOffset = original.nextOffset;
         this.switchPm = original.switchPm;
-    }
-    [inspect_1.inspect.custom]() {
-        return (0, Helpers_1.betterConsoleLog)(this);
     }
     resultsValid() {
         return new Date().getTime() / 1000 < this._validUntil;

@@ -14,7 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.encrypt = exports._serverKeys = void 0;
+exports._serverKeys = void 0;
+exports.encrypt = encrypt;
 const big_integer_1 = __importDefault(require("big-integer"));
 const Helpers_1 = require("../Helpers");
 const PUBLIC_KEYS = [
@@ -67,4 +68,3 @@ async function encrypt(fingerprint, data) {
     // rsa module uses transform.int2bytes(encrypted, keylength), easier:
     return (0, Helpers_1.readBufferFromBigInt)(encrypted, 256, false);
 }
-exports.encrypt = encrypt;

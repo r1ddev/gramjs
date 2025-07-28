@@ -6,14 +6,14 @@ const __1 = require("../../");
 const Helpers_1 = require("../../Helpers");
 const inspect_1 = require("../../inspect");
 class Button {
+    [inspect_1.inspect.custom]() {
+        return (0, Helpers_1.betterConsoleLog)(this);
+    }
     constructor(button, resize, singleUse, selective) {
         this.button = button;
         this.resize = resize;
         this.singleUse = singleUse;
         this.selective = selective;
-    }
-    [inspect_1.inspect.custom]() {
-        return (0, Helpers_1.betterConsoleLog)(this);
     }
     static _isInline(button) {
         return (button instanceof api_1.Api.KeyboardButtonCallback ||

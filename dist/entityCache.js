@@ -1,24 +1,5 @@
 "use strict";
 // Which updates have the following fields?
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -33,7 +14,8 @@ const big_integer_1 = __importDefault(require("big-integer"));
 const perf_hooks_1 = require("perf_hooks");
 const cacheFileName = "cache.json";
 const getWriter = async (outputFile) => {
-    return new (await Promise.resolve().then(() => __importStar(require('steno')))).Writer(outputFile);
+    const { Writer } = await import('steno');
+    return new Writer(outputFile);
 };
 class EntityCache {
     constructor(cacheDir) {
@@ -43,12 +25,15 @@ class EntityCache {
             this.initCache(cacheDir);
         }
     }
-    async initCache(cacheDir) {
+    initCache(cacheDir) {
         if (!fs_1.default.existsSync(cacheDir)) {
             fs_1.default.mkdirSync(cacheDir, { recursive: true });
         }
         this._cacheFile = path_1.default.join(cacheDir, cacheFileName);
-        this._writer = await getWriter(this._cacheFile);
+        if (!fs_1.default.existsSync(this._cacheFile)) {
+            fs_1.default.writeFileSync(this._cacheFile, "{}", "utf-8");
+        }
+        // this._writer = await getWriter(this._cacheFile);
         this.restore();
     }
     add(entities) {
@@ -116,18 +101,19 @@ class EntityCache {
         throw new Error("No cached entity for the given key");
     }
     saveEntity(key, entity) {
-        if (!this._writer)
+        // if (!this._writer) return;
+        if (!this._cacheFile)
             return;
         const startTime = perf_hooks_1.performance.now();
         this._preparedEntities[key] = this.prepareEntity(entity);
         const stringCache = JSON.stringify(this._preparedEntities);
-        this._writer.write(stringCache);
+        // this._writer.write(stringCache);
+        fs_1.default.writeFileSync(this._cacheFile, stringCache, "utf-8");
         const endTime = perf_hooks_1.performance.now();
-        // console.log(`Cache saved in ${endTime - startTime} ms`);
+        console.log(`Cache saved in ${endTime - startTime} ms`);
     }
     restore() {
-        if (!this._writer)
-            return;
+        // if (!this._writer) return;
         if (!this._cacheFile)
             return;
         const startTime = perf_hooks_1.performance.now();
@@ -141,17 +127,11 @@ class EntityCache {
         const cache = JSON.parse(jsonCache);
         if (typeof cache == "object") {
             for (const entityId in cache) {
-                mapCache.set(entityId, this.parseCacheEntity(cache[entityId]));
+                mapCache.set(entityId, this.parseCacheEntity(entityId, cache[entityId]));
+                this._preparedEntities[entityId] = cache[entityId];
             }
         }
         this.cacheMap = mapCache;
-    }
-    makeCache() {
-        const jsonCache = {};
-        for (const [entityId, entity] of this.cacheMap.entries()) {
-            jsonCache[entityId] = this.prepareEntity(entity);
-        }
-        return JSON.stringify(jsonCache);
     }
     prepareEntity(entity) {
         if (typeof entity == "object") {
@@ -176,7 +156,7 @@ class EntityCache {
         }
         return entity;
     }
-    parseCacheEntity(entity) {
+    parseCacheEntity(entityId, entity) {
         const parsedEntity = {};
         if (typeof entity == "object") {
             for (const key in entity) {
@@ -194,7 +174,7 @@ class EntityCache {
                         break;
                 }
             }
-            return parsedEntity;
+            return (0, Utils_1.parseEntity)((0, Helpers_1.returnBigInt)(entityId), parsedEntity);
         }
         return entity;
     }

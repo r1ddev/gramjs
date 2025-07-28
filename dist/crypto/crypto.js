@@ -3,7 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createHash = exports.pbkdf2Sync = exports.Hash = exports.randomBytes = exports.createCipheriv = exports.createDecipheriv = exports.CTR = exports.Counter = void 0;
+exports.Hash = exports.CTR = exports.Counter = void 0;
+exports.createDecipheriv = createDecipheriv;
+exports.createCipheriv = createCipheriv;
+exports.randomBytes = randomBytes;
+exports.pbkdf2Sync = pbkdf2Sync;
+exports.createHash = createHash;
 const aes_1 = __importDefault(require("@cryptography/aes"));
 const converters_1 = require("./converters");
 const words_1 = require("./words");
@@ -63,7 +68,6 @@ function createDecipheriv(algorithm, key, iv) {
         return new CTR(key, iv);
     }
 }
-exports.createDecipheriv = createDecipheriv;
 function createCipheriv(algorithm, key, iv) {
     if (algorithm.includes("ECB")) {
         throw new Error("Not supported");
@@ -72,13 +76,11 @@ function createCipheriv(algorithm, key, iv) {
         return new CTR(key, iv);
     }
 }
-exports.createCipheriv = createCipheriv;
 function randomBytes(count) {
     const bytes = new Uint8Array(count);
     crypto.getRandomValues(bytes);
     return bytes;
 }
-exports.randomBytes = randomBytes;
 class Hash {
     constructor(algorithm) {
         this.algorithm = algorithm;
@@ -110,8 +112,6 @@ async function pbkdf2Sync(password, salt, iterations, ...args) {
         iterations,
     }, passwordKey, 512));
 }
-exports.pbkdf2Sync = pbkdf2Sync;
 function createHash(algorithm) {
     return new Hash(algorithm);
 }
-exports.createHash = createHash;

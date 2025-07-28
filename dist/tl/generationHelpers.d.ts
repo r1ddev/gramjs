@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import type { DateLike } from "../define";
 declare const snakeToCamelCase: (name: string) => string;
 declare const variableSnakeToCamelCase: (str: string) => string;

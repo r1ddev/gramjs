@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import bigInt from "big-integer";
 export declare class AuthKey {
     private _key?;

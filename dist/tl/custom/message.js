@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -38,10 +42,6 @@ const inspect_1 = require("../../inspect");
  * which means you have access to all their sender and chat properties and methods.
  */
 class CustomMessage extends senderGetter_1.SenderGetter {
-    constructor(args) {
-        super();
-        this.init(args);
-    }
     [inspect_1.inspect.custom]() {
         return (0, Helpers_1.betterConsoleLog)(this);
     }
@@ -107,6 +107,10 @@ class CustomMessage extends senderGetter_1.SenderGetter {
             senderId: senderId ? (0, Helpers_1.returnBigInt)(senderId) : undefined,
         });
         this._forward = undefined;
+    }
+    constructor(args) {
+        super();
+        this.init(args);
     }
     _finishInit(client, entities, inputChat) {
         this._client = client;
