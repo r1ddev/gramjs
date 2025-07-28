@@ -11,24 +11,32 @@ import { performance } from 'perf_hooks';
 const cacheFileName = "cache.json";
 
 type Entity = Record<string, any>;
-type PreparedEntity = Record<string, string | number>;
-
-const getWriter = async (outputFile: string) => {
-    const { Writer } = await import('steno');
-    return new Writer(outputFile);
-}
+export type PreparedEntity = Record<string, string | number>;
 
 export class EntityCache {
     private cacheMap: Map<string, any>;
     private _cacheFile: string | undefined;
-    private _writer: Awaited<ReturnType<typeof getWriter>> | undefined;
     private _preparedEntities: Record<string, PreparedEntity> = {};
+    private onSave: ((peerId: string, peer: PreparedEntity) => void) | undefined;
+    private onGet: ((peerId: string) => PreparedEntity) | undefined;
 
-    constructor(cacheDir?: string) {
+    constructor({ dir, onSave, onGet }: {
+        dir?: string,
+        onSave?: (peerId: string, peer: PreparedEntity) => void,
+        onGet?: (peerId: string) => Record<string, any>
+    } | undefined = {}) {
         this.cacheMap = new Map();
         
-        if (cacheDir) {
-            this.initCache(cacheDir);
+        if (dir) {
+            this.initCache(dir);
+        }
+
+        if (onSave) {
+            this.onSave = onSave;
+        }
+
+        if (onGet) {
+            this.onGet = onGet;
         }
     }
 
@@ -43,7 +51,6 @@ export class EntityCache {
             fs.writeFileSync(this._cacheFile, "{}", "utf-8");
         }
 
-        // this._writer = await getWriter(this._cacheFile);
         this.restore();
     }
 
@@ -76,6 +83,7 @@ export class EntityCache {
                     const peer = getInputPeer(entity);
                     this.cacheMap.set(pid.toString(), peer);
                     this.saveEntity(pid.toString(), peer);
+                    this.onSave?.(pid.toString(), this.prepareEntity(peer));
                 }
             } catch (e) {}
         }
@@ -85,11 +93,19 @@ export class EntityCache {
         if (item == undefined) {
             throw new Error("No cached entity for the given key");
         }
+
         item = returnBigInt(item);
         if (item.lesser(bigInt.zero)) {
             let res;
             try {
-                res = this.cacheMap.get(getPeerId(item).toString());
+                if (this.onGet) {
+                    const itemStr = item.toString();
+                    const rawItem = this.onGet(itemStr);
+                    res = this.parseCacheEntity(itemStr, rawItem);
+                } else {
+                    res = this.cacheMap.get(getPeerId(item).toString());
+                }
+                
                 if (res) {
                     return res;
                 }
@@ -98,6 +114,16 @@ export class EntityCache {
             }
         }
         for (const cls of [Api.PeerUser, Api.PeerChat, Api.PeerChannel]) {
+            if (this.onGet) {
+                const itemStr = item.toString();
+                const rawItem = this.onGet(itemStr);
+                const entity = this.parseCacheEntity(itemStr, rawItem);
+
+                if (entity) {
+                    return entity;
+                }
+            }
+
             const result = this.cacheMap.get(
                 getPeerId(
                     new cls({
@@ -107,6 +133,7 @@ export class EntityCache {
                     })
                 ).toString()
             );
+            
             if (result) {
                 return result;
             }
@@ -115,7 +142,6 @@ export class EntityCache {
     }
 
     saveEntity(key: string, entity: Entity) {
-        // if (!this._writer) return;
         if (!this._cacheFile) return;
 
         const startTime = performance.now();
@@ -124,7 +150,6 @@ export class EntityCache {
 
         const stringCache = JSON.stringify(this._preparedEntities);
 
-        // this._writer.write(stringCache);
         fs.writeFileSync(this._cacheFile, stringCache, "utf-8");
 
         const endTime = performance.now();
@@ -135,13 +160,13 @@ export class EntityCache {
         // if (!this._writer) return;
         if (!this._cacheFile) return;
 
-        const startTime = performance.now();
+        // const startTime = performance.now();
 
         const stringCache = fs.readFileSync(this._cacheFile, "utf-8");
 
         this.load(stringCache.length === 0 ? "{}" : stringCache);
 
-        const endTime = performance.now();
+        // const endTime = performance.now();
         // console.log(`Cache restored in ${endTime - startTime} ms`);
     }
 

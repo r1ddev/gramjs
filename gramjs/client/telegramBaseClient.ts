@@ -10,7 +10,7 @@ import { Api } from "../tl";
 
 import os from "./os";
 import type { AuthKey } from "../crypto/AuthKey";
-import { EntityCache } from "../entityCache";
+import { EntityCache, PreparedEntity } from "../entityCache";
 import type { ParseInterface } from "./messageParse";
 import type { EventBuilder } from "../events/common";
 import { MarkdownParser } from "../extensions/markdown";
@@ -134,7 +134,11 @@ export interface TelegramClientParams {
     /**
      * The path to the entity cache folder.
      */
-    cacheDir?: string;
+    cache?: {
+        dir?: string,
+        onSave?: (peerId: string, peer: PreparedEntity) => void,
+        onGet?: (peerId: string) => PreparedEntity,
+    };
 }
 
 const clientParamsDefault = {
@@ -325,7 +329,7 @@ export abstract class TelegramBaseClient {
                 "Cannot use SSL with proxies. You need to disable the useWSS client param in TelegramClient"
             );
         }
-        this._entityCache = new EntityCache(clientParams.cacheDir);
+        this._entityCache = new EntityCache(clientParams.cache);
         // These will be set later
         this._config = undefined;
         this._loopStarted = false;
