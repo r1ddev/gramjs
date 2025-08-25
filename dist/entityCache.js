@@ -13,16 +13,18 @@ const tl_1 = require("./tl");
 const big_integer_1 = __importDefault(require("big-integer"));
 const perf_hooks_1 = require("perf_hooks");
 const cacheFileName = "cache.json";
-const getWriter = async (outputFile) => {
-    const { Writer } = await import('steno');
-    return new Writer(outputFile);
-};
 class EntityCache {
-    constructor(cacheDir) {
+    constructor({ dir, onSave, onGet } = {}) {
         this._preparedEntities = {};
         this.cacheMap = new Map();
-        if (cacheDir) {
-            this.initCache(cacheDir);
+        if (dir) {
+            this.initCache(dir);
+        }
+        if (onSave) {
+            this.onSave = onSave;
+        }
+        if (onGet) {
+            this.onGet = onGet;
         }
     }
     initCache(cacheDir) {
@@ -33,10 +35,10 @@ class EntityCache {
         if (!fs_1.default.existsSync(this._cacheFile)) {
             fs_1.default.writeFileSync(this._cacheFile, "{}", "utf-8");
         }
-        // this._writer = await getWriter(this._cacheFile);
         this.restore();
     }
     add(entities) {
+        var _a;
         const temp = [];
         if (!(0, Helpers_1.isArrayLike)(entities)) {
             if (entities != undefined) {
@@ -66,6 +68,7 @@ class EntityCache {
                     const peer = (0, Utils_1.getInputPeer)(entity);
                     this.cacheMap.set(pid.toString(), peer);
                     this.saveEntity(pid.toString(), peer);
+                    (_a = this.onSave) === null || _a === void 0 ? void 0 : _a.call(this, pid.toString(), this.prepareEntity(peer));
                 }
             }
             catch (e) { }
@@ -79,7 +82,14 @@ class EntityCache {
         if (item.lesser(big_integer_1.default.zero)) {
             let res;
             try {
-                res = this.cacheMap.get((0, Utils_1.getPeerId)(item).toString());
+                if (this.onGet) {
+                    const itemStr = item.toString();
+                    const rawItem = this.onGet(itemStr);
+                    res = this.parseCacheEntity(itemStr, rawItem);
+                }
+                else {
+                    res = this.cacheMap.get((0, Utils_1.getPeerId)(item).toString());
+                }
                 if (res) {
                     return res;
                 }
@@ -89,6 +99,14 @@ class EntityCache {
             }
         }
         for (const cls of [tl_1.Api.PeerUser, tl_1.Api.PeerChat, tl_1.Api.PeerChannel]) {
+            if (this.onGet) {
+                const itemStr = item.toString();
+                const rawItem = this.onGet(itemStr);
+                const entity = this.parseCacheEntity(itemStr, rawItem);
+                if (entity) {
+                    return entity;
+                }
+            }
             const result = this.cacheMap.get((0, Utils_1.getPeerId)(new cls({
                 userId: item,
                 chatId: item,
@@ -101,13 +119,11 @@ class EntityCache {
         throw new Error("No cached entity for the given key");
     }
     saveEntity(key, entity) {
-        // if (!this._writer) return;
         if (!this._cacheFile)
             return;
         const startTime = perf_hooks_1.performance.now();
         this._preparedEntities[key] = this.prepareEntity(entity);
         const stringCache = JSON.stringify(this._preparedEntities);
-        // this._writer.write(stringCache);
         fs_1.default.writeFileSync(this._cacheFile, stringCache, "utf-8");
         const endTime = perf_hooks_1.performance.now();
         console.log(`Cache saved in ${endTime - startTime} ms`);
@@ -116,10 +132,10 @@ class EntityCache {
         // if (!this._writer) return;
         if (!this._cacheFile)
             return;
-        const startTime = perf_hooks_1.performance.now();
+        // const startTime = performance.now();
         const stringCache = fs_1.default.readFileSync(this._cacheFile, "utf-8");
         this.load(stringCache.length === 0 ? "{}" : stringCache);
-        const endTime = perf_hooks_1.performance.now();
+        // const endTime = performance.now();
         // console.log(`Cache restored in ${endTime - startTime} ms`);
     }
     load(jsonCache) {

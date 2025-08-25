@@ -1,11 +1,17 @@
 import bigInt from "big-integer";
 type Entity = Record<string, any>;
+export type PreparedEntity = Record<string, string | number>;
 export declare class EntityCache {
     private cacheMap;
     private _cacheFile;
-    private _writer;
     private _preparedEntities;
-    constructor(cacheDir?: string);
+    private onSave;
+    private onGet;
+    constructor({ dir, onSave, onGet }?: {
+        dir?: string;
+        onSave?: (peerId: string, peer: PreparedEntity) => void;
+        onGet?: (peerId: string) => Record<string, any>;
+    } | undefined);
     initCache(cacheDir: string): void;
     add(entities: any): void;
     get(item: bigInt.BigInteger | string | undefined): any;
