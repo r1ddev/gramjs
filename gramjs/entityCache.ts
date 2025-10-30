@@ -99,9 +99,16 @@ export class EntityCache {
             let res;
             try {
                 if (this.onGet) {
-                    const itemStr = item.toString();
-                    const rawItem = this.onGet(itemStr);
-                    res = this.parseCacheEntity(itemStr, rawItem);
+                    try {
+                        const itemStr = item.toString();
+                        const rawItem = this.onGet(itemStr);
+                        res = this.parseCacheEntity(itemStr, rawItem);
+                    } catch (error) {
+                        console.warn('[entityCache] get onGet lesser zero error', error);
+                        
+                        res = this.cacheMap.get(getPeerId(item).toString());
+                    }
+                    
                 } else {
                     res = this.cacheMap.get(getPeerId(item).toString());
                 }
@@ -115,12 +122,16 @@ export class EntityCache {
         }
         for (const cls of [Api.PeerUser, Api.PeerChat, Api.PeerChannel]) {
             if (this.onGet) {
-                const itemStr = item.toString();
-                const rawItem = this.onGet(itemStr);
-                const entity = this.parseCacheEntity(itemStr, rawItem);
+                try {
+                    const itemStr = item.toString();
+                    const rawItem = this.onGet(itemStr);
+                    const entity = this.parseCacheEntity(itemStr, rawItem);
 
-                if (entity) {
-                    return entity;
+                    if (entity) {
+                        return entity;
+                    }
+                } catch (error) {
+                    console.warn('[entityCache] get onGet error', error);
                 }
             }
 
