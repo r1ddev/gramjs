@@ -355,10 +355,11 @@ async function downloadMedia(client, messageOrMedia, outputFile, thumb, progress
     let date;
     let media;
     if (messageOrMedia instanceof tl_1.Api.Message) {
+        const inputChat = await messageOrMedia.inputChat;
         media = messageOrMedia.media;
         date = messageOrMedia.date;
-        msgData = messageOrMedia.inputChat
-            ? [messageOrMedia.inputChat, messageOrMedia.id]
+        msgData = inputChat
+            ? [inputChat, messageOrMedia.id]
             : undefined;
     }
     else {

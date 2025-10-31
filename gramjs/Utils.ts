@@ -243,16 +243,16 @@ export function _photoSizeByteCount(size: Api.TypePhotoSize) {
     }
 }
 
-export function _getEntityPair(
+export async function _getEntityPair(
     entityId: string,
     entities: Map<string, Entity>,
     cache: EntityCache,
     getInputPeerFunction: any = getInputPeer
-): [Entity?, Api.TypeInputPeer?] {
+): Promise<[Entity?, Api.TypeInputPeer?]> {
     const entity = entities.get(entityId);
     let inputEntity;
     try {
-        inputEntity = cache.get(entityId);
+        inputEntity = await cache.get(entityId);
     } catch (e: any) {
         try {
             inputEntity = getInputPeerFunction(inputEntity);
@@ -1206,7 +1206,7 @@ export function resolveId(
 export function parseEntity(
     entityId: bigInt.BigInteger,
     entity: Record<string, any>
-): Api.InputPeerUser | Api.InputPeerChannel | Api.InputPeerChat | Api.InputPeerSelf | Record<string, any> {
+) {
     if (entityId.greaterOrEquals(bigInt.zero)) {
         if (entity.userId && entity.accessHash) {
             return new Api.InputPeerUser({
@@ -1226,7 +1226,11 @@ export function parseEntity(
                 accessHash: entity.accessHash
             });
         } else {
-            return entity;
+            return new Api.InputPeerChannel({
+                channelId: entityId,
+                accessHash: entityId
+            });
+            // return entity;
         }
     }
 
@@ -1235,7 +1239,10 @@ export function parseEntity(
             chatId: entity.chatId,
         });
     } else {
-        return entity;
+        return new Api.InputPeerChat({
+            chatId: entityId,
+        });
+        // return entity;
     }
 }
 

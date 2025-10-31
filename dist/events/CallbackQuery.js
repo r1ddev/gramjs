@@ -89,9 +89,9 @@ class CallbackQueryEvent extends common_1.EventCommonSender {
         this._message = undefined;
         this._answered = false;
     }
-    _setClient(client) {
+    async _setClient(client) {
         super._setClient(client);
-        const [sender, inputSender] = (0, Utils_1._getEntityPair)(this._senderId.toString(), this._entities, client._entityCache);
+        const [sender, inputSender] = await (0, Utils_1._getEntityPair)(this._senderId.toString(), this._entities, client._entityCache);
         this._sender = sender;
         this._inputSender = inputSender;
     }
@@ -127,7 +127,7 @@ class CallbackQueryEvent extends common_1.EventCommonSender {
         this._inputSender = (0, Utils_1.getInputPeer)(this._chat);
         if (!this._inputSender.hasOwnProperty("accessHash")) {
             try {
-                this._inputSender = this._client._entityCache.get(this._senderId);
+                this._inputSender = await this._client._entityCache.get(this._senderId);
             }
             catch (e) {
                 const m = await this.getMessage();

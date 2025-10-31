@@ -53,18 +53,23 @@ export class SenderGetter extends ChatGetter {
     }
 
     get inputSender() {
-        if (!this._inputSender && this._senderId && this._client) {
-            try {
-                this._inputSender = this._client._entityCache.get(
-                    this._senderId
-                );
-            } catch (e) {}
-        }
-        return this._inputSender;
+        return new Promise((resolve, reject) => {
+            if (!this._inputSender && this._senderId && this._client) {
+                this._client._entityCache
+                    .get(this._senderId)
+                    .then((sender) => {
+                        this._inputSender = sender;
+                        resolve(this._inputSender);
+                    })
+                    .catch(() => {});
+            }
+            resolve(this._inputSender);
+        });
     }
 
     async getInputSender() {
-        if (!this.inputSender && this._senderId && this._client) {
+        const inputSender = await this.inputSender;
+        if (!inputSender && this._senderId && this._client) {
             await this._refetchSender();
         }
         return this._inputSender;
@@ -76,3 +81,4 @@ export class SenderGetter extends ChatGetter {
 
     async _refetchSender() {}
 }
+

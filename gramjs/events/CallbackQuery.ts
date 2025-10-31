@@ -144,9 +144,9 @@ export class CallbackQueryEvent extends EventCommonSender {
         this._answered = false;
     }
 
-    _setClient(client: TelegramClient) {
+    async _setClient(client: TelegramClient) {
         super._setClient(client);
-        const [sender, inputSender] = _getEntityPair(
+        const [sender, inputSender] = await _getEntityPair(
             this._senderId!.toString(),
             this._entities,
             client._entityCache
@@ -195,7 +195,7 @@ export class CallbackQueryEvent extends EventCommonSender {
         this._inputSender = getInputPeer(this._chat);
         if (!this._inputSender.hasOwnProperty("accessHash")) {
             try {
-                this._inputSender = this._client!._entityCache.get(
+                this._inputSender = await this._client!._entityCache.get(
                     this._senderId
                 );
             } catch (e) {

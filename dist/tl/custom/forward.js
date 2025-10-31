@@ -10,10 +10,12 @@ class Forward extends senderGetter_1.SenderGetter {
     [inspect_1.inspect.custom]() {
         return (0, Helpers_1.betterConsoleLog)(this);
     }
-    constructor(client, original, entities) {
+    constructor(original) {
         super();
         // contains info for the original header sent by telegram.
         this.originalFwd = original;
+    }
+    async prepare(client, original, entities) {
         let senderId = undefined;
         let sender = undefined;
         let inputSender = undefined;
@@ -24,11 +26,11 @@ class Forward extends senderGetter_1.SenderGetter {
             const ty = (0, Helpers_1._entityType)(original.fromId);
             if (ty === Helpers_1._EntityType.USER) {
                 senderId = (0, Utils_1.getPeerId)(original.fromId);
-                [sender, inputSender] = (0, Utils_1._getEntityPair)(senderId, entities, client._entityCache);
+                [sender, inputSender] = await (0, Utils_1._getEntityPair)(senderId, entities, client._entityCache);
             }
             else if (ty === Helpers_1._EntityType.CHANNEL || ty === Helpers_1._EntityType.CHAT) {
                 peer = original.fromId;
-                [chat, inputChat] = (0, Utils_1._getEntityPair)((0, Utils_1.getPeerId)(peer), entities, client._entityCache);
+                [chat, inputChat] = await (0, Utils_1._getEntityPair)((0, Utils_1.getPeerId)(peer), entities, client._entityCache);
             }
         }
         chatGetter_1.ChatGetter.initChatClass(this, {

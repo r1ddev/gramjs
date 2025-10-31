@@ -1,32 +1,43 @@
 // Which updates have the following fields?
 
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 import { getInputPeer, getPeerId, parseEntity } from "./Utils";
 import { isArrayLike, returnBigInt } from "./Helpers";
 import { Api } from "./tl";
 import bigInt from "big-integer";
-import { performance } from 'perf_hooks';
+import { performance } from "perf_hooks";
+import { Entity, EntityLike } from "./define";
 
 const cacheFileName = "cache.json";
 
-type Entity = Record<string, any>;
+type EntitySimplified = Record<string, any>;
 export type PreparedEntity = Record<string, string | number>;
+export type CacheEntityOnSave = (peerId: string, peer: PreparedEntity) => void;
+export type CacheEntityOnGet = (
+    peerId: string
+) => PreparedEntity | Promise<PreparedEntity>;
 
 export class EntityCache {
     private cacheMap: Map<string, any>;
     private _cacheFile: string | undefined;
     private _preparedEntities: Record<string, PreparedEntity> = {};
-    private onSave: ((peerId: string, peer: PreparedEntity) => void) | undefined;
-    private onGet: ((peerId: string) => PreparedEntity) | undefined;
+    private onSave: CacheEntityOnSave | undefined;
+    private onGet: CacheEntityOnGet | undefined;
 
-    constructor({ dir, onSave, onGet }: {
-        dir?: string,
-        onSave?: (peerId: string, peer: PreparedEntity) => void,
-        onGet?: (peerId: string) => Record<string, any>
-    } | undefined = {}) {
+    constructor({
+        dir,
+        onSave,
+        onGet,
+    }:
+        | {
+              dir?: string;
+              onSave?: CacheEntityOnSave;
+              onGet?: CacheEntityOnGet;
+          }
+        | undefined = {}) {
         this.cacheMap = new Map();
-        
+
         if (dir) {
             this.initCache(dir);
         }
@@ -89,7 +100,7 @@ export class EntityCache {
         }
     }
 
-    get(item: bigInt.BigInteger | string | undefined) {
+    async get(item: bigInt.BigInteger | string | undefined) {
         if (item == undefined) {
             throw new Error("No cached entity for the given key");
         }
@@ -101,18 +112,20 @@ export class EntityCache {
                 if (this.onGet) {
                     try {
                         const itemStr = item.toString();
-                        const rawItem = this.onGet(itemStr);
+                        const rawItem = await this.onGet(itemStr);
                         res = this.parseCacheEntity(itemStr, rawItem);
                     } catch (error) {
-                        console.warn('[entityCache] get onGet lesser zero error', error);
-                        
+                        console.warn(
+                            "[entityCache] get onGet lesser zero error",
+                            error
+                        );
+
                         res = this.cacheMap.get(getPeerId(item).toString());
                     }
-                    
                 } else {
                     res = this.cacheMap.get(getPeerId(item).toString());
                 }
-                
+
                 if (res) {
                     return res;
                 }
@@ -124,14 +137,14 @@ export class EntityCache {
             if (this.onGet) {
                 try {
                     const itemStr = item.toString();
-                    const rawItem = this.onGet(itemStr);
+                    const rawItem = await this.onGet(itemStr);
                     const entity = this.parseCacheEntity(itemStr, rawItem);
 
                     if (entity) {
                         return entity;
                     }
                 } catch (error) {
-                    console.warn('[entityCache] get onGet error', error);
+                    console.warn("[entityCache] get onGet error", error);
                 }
             }
 
@@ -144,7 +157,7 @@ export class EntityCache {
                     })
                 ).toString()
             );
-            
+
             if (result) {
                 return result;
             }
@@ -152,7 +165,7 @@ export class EntityCache {
         throw new Error("No cached entity for the given key");
     }
 
-    saveEntity(key: string, entity: Entity) {
+    saveEntity(key: string, entity: EntitySimplified) {
         if (!this._cacheFile) return;
 
         const startTime = performance.now();
@@ -187,7 +200,10 @@ export class EntityCache {
         const cache = JSON.parse(jsonCache);
         if (typeof cache == "object") {
             for (const entityId in cache) {
-                mapCache.set(entityId, this.parseCacheEntity(entityId, cache[entityId]));
+                mapCache.set(
+                    entityId,
+                    this.parseCacheEntity(entityId, cache[entityId])
+                );
                 this._preparedEntities[entityId] = cache[entityId];
             }
         }
@@ -195,7 +211,7 @@ export class EntityCache {
         this.cacheMap = mapCache;
     }
 
-    private prepareEntity(entity: Entity): PreparedEntity {
+    private prepareEntity(entity: EntitySimplified): PreparedEntity {
         if (typeof entity == "object") {
             const entityPrepared: PreparedEntity = {};
 
@@ -203,13 +219,17 @@ export class EntityCache {
                 if (key === "originalArgs") continue;
 
                 switch (typeof entity[key]) {
-                    case 'object':
+                    case "object":
                         if (bigInt.isInstance(entity[key])) {
-                            entityPrepared[key] = `bigInt:${entity[key].toString()}`;
+                            entityPrepared[key] = `bigInt:${entity[
+                                key
+                            ].toString()}`;
                             break;
                         }
 
-                        entityPrepared[key] = JSON.stringify(entityPrepared[key]);
+                        entityPrepared[key] = JSON.stringify(
+                            entityPrepared[key]
+                        );
                         break;
                     default:
                         entityPrepared[key] = entity[key];
@@ -221,31 +241,38 @@ export class EntityCache {
         return entity;
     }
 
-    private parseCacheEntity(entityId: string, entity: PreparedEntity): Entity {
-        const parsedEntity: any = {};
+    private parseCacheEntity(
+        entityId: string,
+        entity: PreparedEntity
+    ) {
+        const simplifiedEntity: EntitySimplified = {};
 
-        if (typeof entity == "object") {
-            for (const key in entity) {
-                const value = entity[key];
+        for (const key in entity) {
+            const value = entity[key];
 
-                switch (typeof value) {
-                    case 'string':
-                        if (value.startsWith("bigInt:")) {
-                            parsedEntity[key] = bigInt(value.replace("bigInt:", ""));
-                            break;
-                        }
-
-                        parsedEntity[key] = value;
+            switch (typeof value) {
+                case "string":
+                    if (value.startsWith("bigInt:")) {
+                        simplifiedEntity[key] = bigInt(
+                            value.replace("bigInt:", "")
+                        );
                         break;
-                    default:
-                        parsedEntity[key] = value;
-                        break;
-                }
+                    }
+
+                    simplifiedEntity[key] = value;
+                    break;
+                default:
+                    simplifiedEntity[key] = value;
+                    break;
             }
-
-            return parseEntity(returnBigInt(entityId), parsedEntity);
         }
 
-        return entity;
+        const parsedEntity = parseEntity(
+            returnBigInt(entityId),
+            simplifiedEntity
+        );
+
+        return parsedEntity;
     }
 }
+

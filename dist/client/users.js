@@ -233,7 +233,7 @@ async function getInputEntity(client, peer) {
         if (typeof peer == "string") {
             const valid = (0, Utils_1.parseID)(peer);
             if (valid) {
-                const res = client._entityCache.get(peer);
+                const res = await client._entityCache.get(peer);
                 if (res) {
                     return res;
                 }
@@ -242,7 +242,7 @@ async function getInputEntity(client, peer) {
         if (typeof peer === "number" ||
             typeof peer === "bigint" ||
             big_integer_1.default.isInstance(peer)) {
-            const res = client._entityCache.get(peer.toString());
+            const res = await client._entityCache.get(peer.toString());
             if (res) {
                 return res;
             }
@@ -251,7 +251,7 @@ async function getInputEntity(client, peer) {
         if (typeof peer == "object" &&
             !big_integer_1.default.isInstance(peer) &&
             peer.SUBCLASS_OF_ID === 0x2d45687) {
-            const res = client._entityCache.get(__1.utils.getPeerId(peer));
+            const res = await client._entityCache.get(__1.utils.getPeerId(peer));
             if (res) {
                 return res;
             }

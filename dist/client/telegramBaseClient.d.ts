@@ -3,7 +3,7 @@ import { Session } from "../sessions";
 import { Logger, PromisedNetSockets, PromisedWebSockets } from "../extensions";
 import { Api } from "../tl";
 import type { AuthKey } from "../crypto/AuthKey";
-import { EntityCache, PreparedEntity } from "../entityCache";
+import { CacheEntityOnGet, CacheEntityOnSave, EntityCache } from "../entityCache";
 import type { ParseInterface } from "./messageParse";
 import type { EventBuilder } from "../events/common";
 import { MTProtoSender } from "../network";
@@ -115,8 +115,8 @@ export interface TelegramClientParams {
      */
     cache?: {
         dir?: string;
-        onSave?: (peerId: string, peer: PreparedEntity) => void;
-        onGet?: (peerId: string) => PreparedEntity;
+        onSave?: CacheEntityOnSave;
+        onGet?: CacheEntityOnGet;
     };
 }
 export declare abstract class TelegramBaseClient {

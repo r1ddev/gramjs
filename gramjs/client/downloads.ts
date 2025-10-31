@@ -528,10 +528,12 @@ export async function downloadMedia(
     let media;
 
     if (messageOrMedia instanceof Api.Message) {
+        const inputChat = await messageOrMedia.inputChat
+
         media = messageOrMedia.media;
         date = messageOrMedia.date;
-        msgData = messageOrMedia.inputChat
-            ? [messageOrMedia.inputChat, messageOrMedia.id]
+        msgData = inputChat
+            ? [inputChat, messageOrMedia.id]
             : undefined;
     } else {
         media = messageOrMedia;

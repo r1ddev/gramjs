@@ -19,7 +19,7 @@ export declare class ChatGetter {
     static initChatClass(c: any, { chatPeer, inputChat, chat, broadcast }: ChatGetterConstructorParams): void;
     get chat(): Entity | undefined;
     getChat(): Promise<Entity | undefined>;
-    get inputChat(): EntityLike | undefined;
+    get inputChat(): Promise<EntityLike | undefined>;
     getInputChat(): Promise<EntityLike | undefined>;
     get chatId(): import("big-integer").BigInteger | undefined;
     get isPrivate(): boolean | undefined;

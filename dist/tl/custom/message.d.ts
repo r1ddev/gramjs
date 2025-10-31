@@ -346,7 +346,7 @@ export declare class CustomMessage extends SenderGetter {
     };
     init({ id, peerId, date, out, mentioned, mediaUnread, silent, post, fromId, replyTo, message, fwdFrom, viaBotId, media, replyMarkup, entities, views, editDate, postAuthor, groupedId, fromScheduled, legacy, editHide, pinned, restrictionReason, forwards, replies, action, reactions, noforwards, ttlPeriod, _entities, }: MessageBaseInterface): void;
     constructor(args: MessageBaseInterface);
-    _finishInit(client: TelegramClient, entities: Map<string, Entity>, inputChat?: EntityLike): void;
+    _finishInit(client: TelegramClient, entities: Map<string, Entity>, inputChat?: EntityLike): Promise<void>;
     get client(): TelegramClient | undefined;
     get text(): string;
     set text(value: string);
@@ -368,7 +368,7 @@ export declare class CustomMessage extends SenderGetter {
      * Returns a list of lists of `MessageButton <MessageButton>`, if any.
      * Otherwise, it returns `undefined`.
      */
-    get buttons(): MessageButton[][] | undefined;
+    get buttons(): Promise<unknown>;
     /**
      * Returns `buttons` when that property fails (this is rarely needed).
      */
@@ -421,7 +421,7 @@ export declare class CustomMessage extends SenderGetter {
      to know what bot we want to start. Raises ``Error`` if the bot
      cannot be found but is needed. Returns `None` if it's not needed.
      */
-    _neededMarkupBot(): any;
+    _neededMarkupBot(): Promise<any>;
     _documentByAttribute(kind: Function, condition?: Function): Api.Document | undefined;
 }
 export {};

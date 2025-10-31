@@ -56,10 +56,15 @@ export class Draft {
     }
 
     get inputEntity() {
-        if (!this._inputEntity) {
-            this._inputEntity = this._client._entityCache.get(this._peer);
-        }
-        return this._inputEntity;
+        return new Promise((resolve, reject) => {
+            if (!this._inputEntity) {
+                this._client._entityCache.get(this._peer).then((entity) => {
+                    this._inputEntity = entity;
+                    resolve(this._inputEntity);
+                }).catch(() => {});
+            }
+            resolve(this._inputEntity);
+        });
     }
 
     // TODO later

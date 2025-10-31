@@ -34,7 +34,7 @@ import TypeInputFile = Api.TypeInputFile;
  */
 export declare function getInputPeer(entity: any, allowSelf?: boolean, checkHash?: boolean): Api.TypeInputPeer;
 export declare function _photoSizeByteCount(size: Api.TypePhotoSize): number | undefined;
-export declare function _getEntityPair(entityId: string, entities: Map<string, Entity>, cache: EntityCache, getInputPeerFunction?: any): [Entity?, Api.TypeInputPeer?];
+export declare function _getEntityPair(entityId: string, entities: Map<string, Entity>, cache: EntityCache, getInputPeerFunction?: any): Promise<[Entity?, Api.TypeInputPeer?]>;
 export declare function getInnerText(text: string, entities: Api.TypeMessageEntity[]): string[];
 /**
  Similar to :meth:`get_input_peer`, but for :tl:`InputChannel`'s alone.
@@ -177,7 +177,7 @@ export declare function resolveId(markedId: bigInt.BigInteger): [
     bigInt.BigInteger,
     typeof Api.PeerUser | typeof Api.PeerChannel | typeof Api.PeerChat
 ];
-export declare function parseEntity(entityId: bigInt.BigInteger, entity: Record<string, any>): Api.InputPeerUser | Api.InputPeerChannel | Api.InputPeerChat | Api.InputPeerSelf | Record<string, any>;
+export declare function parseEntity(entityId: bigInt.BigInteger, entity: Record<string, any>): Api.InputPeerSelf | Api.InputPeerChat | Api.InputPeerUser | Api.InputPeerChannel;
 /**
  * returns an entity pair
  * @param entityId

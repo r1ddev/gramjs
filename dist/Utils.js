@@ -236,11 +236,11 @@ function _photoSizeByteCount(size) {
         return undefined;
     }
 }
-function _getEntityPair(entityId, entities, cache, getInputPeerFunction = getInputPeer) {
+async function _getEntityPair(entityId, entities, cache, getInputPeerFunction = getInputPeer) {
     const entity = entities.get(entityId);
     let inputEntity;
     try {
-        inputEntity = cache.get(entityId);
+        inputEntity = await cache.get(entityId);
     }
     catch (e) {
         try {
@@ -1110,7 +1110,11 @@ function parseEntity(entityId, entity) {
             });
         }
         else {
-            return entity;
+            return new tl_1.Api.InputPeerChannel({
+                channelId: entityId,
+                accessHash: entityId
+            });
+            // return entity;
         }
     }
     if (entity.chatId && entity.accessHash) {
@@ -1119,7 +1123,10 @@ function parseEntity(entityId, entity) {
         });
     }
     else {
-        return entity;
+        return new tl_1.Api.InputPeerChat({
+            chatId: entityId,
+        });
+        // return entity;
     }
 }
 /**

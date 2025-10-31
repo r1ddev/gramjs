@@ -20,32 +20,37 @@ export class Forward extends SenderGetter {
     }
 
     constructor(
-        client: TelegramClient,
         original: Api.MessageFwdHeader,
-        entities: Map<string, Entity>
     ) {
         super();
         // contains info for the original header sent by telegram.
         this.originalFwd = original;
+    }
 
+    async prepare(
+        client: TelegramClient,
+        original: Api.MessageFwdHeader,
+        entities: Map<string, Entity>
+    ) {
         let senderId = undefined;
         let sender = undefined;
         let inputSender = undefined;
         let peer = undefined;
         let chat = undefined;
         let inputChat = undefined;
+
         if (original.fromId) {
             const ty = _entityType(original.fromId);
             if (ty === _EntityType.USER) {
                 senderId = getPeerId(original.fromId);
-                [sender, inputSender] = _getEntityPair(
+                [sender, inputSender] = await _getEntityPair(
                     senderId,
                     entities,
                     client._entityCache
                 );
             } else if (ty === _EntityType.CHANNEL || ty === _EntityType.CHAT) {
                 peer = original.fromId;
-                [chat, inputChat] = _getEntityPair(
+                [chat, inputChat] = await _getEntityPair(
                     getPeerId(peer),
                     entities,
                     client._entityCache

@@ -9,7 +9,8 @@ export declare class Forward extends SenderGetter {
     [inspect.custom](): {
         [key: string]: any;
     };
-    constructor(client: TelegramClient, original: Api.MessageFwdHeader, entities: Map<string, Entity>);
+    constructor(original: Api.MessageFwdHeader);
+    prepare(client: TelegramClient, original: Api.MessageFwdHeader, entities: Map<string, Entity>): Promise<void>;
 }
 export interface Forward extends ChatGetter, SenderGetter {
 }

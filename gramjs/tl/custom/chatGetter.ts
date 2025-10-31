@@ -54,19 +54,24 @@ export class ChatGetter {
         return this._chat;
     }
 
-    get inputChat() {
-        if (!this._inputChat && this._chatPeer && this._client) {
-            try {
-                this._inputChat = this._client._entityCache.get(
-                    utils.getPeerId(this._chatPeer)
-                );
-            } catch (e) {}
-        }
-        return this._inputChat;
+    get inputChat(): Promise<EntityLike | undefined> {
+        return new Promise((resolve, reject) => {
+            if (!this._inputChat && this._chatPeer && this._client) {
+                this._client._entityCache
+                    .get(utils.getPeerId(this._chatPeer))
+                    .then((entity) => {
+                        this._inputChat = entity;
+                        resolve(this._inputChat);
+                    })
+                    .catch(() => {});
+            }
+            resolve(this._inputChat);
+        });
     }
 
     async getInputChat() {
-        if (!this.inputChat && this.chatId && this._client) {
+        const inputChat = await this.inputChat;
+        if (!inputChat && this.chatId && this._client) {
             try {
                 const target = this.chatId;
                 for await (const dialog of this._client.iterDialogs({
@@ -118,3 +123,4 @@ export class ChatGetter {
 
     async _refetchChat() {}
 }
+

@@ -20,7 +20,7 @@ export declare class SenderGetter extends ChatGetter {
     static initSenderClass(c: any, { senderId, sender, inputSender }: SenderGetterConstructorInterface): void;
     get sender(): Entity | undefined;
     getSender(): Promise<Entity | undefined>;
-    get inputSender(): Api.TypeInputPeer | undefined;
+    get inputSender(): Promise<unknown>;
     getInputSender(): Promise<Api.TypeInputPeer | undefined>;
     get senderId(): bigInt.BigInteger | undefined;
     _refetchSender(): Promise<void>;

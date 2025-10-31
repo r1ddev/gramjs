@@ -17,5 +17,5 @@ export declare class Draft {
     };
     constructor(client: TelegramClient, entity: Entity, draft: Api.TypeDraftMessage | undefined);
     get entity(): Entity | undefined;
-    get inputEntity(): Api.TypeInputPeer | undefined;
+    get inputEntity(): Promise<unknown>;
 }

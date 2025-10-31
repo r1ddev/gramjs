@@ -54,7 +54,7 @@ export declare class CallbackQueryEvent extends EventCommonSender {
     private _message;
     private _answered;
     constructor(query: Api.UpdateBotCallbackQuery | Api.UpdateInlineBotCallbackQuery, peer: Api.TypePeer, msgId: number);
-    _setClient(client: TelegramClient): void;
+    _setClient(client: TelegramClient): Promise<void>;
     get id(): import("big-integer").BigInteger;
     get messageId(): number;
     get data(): Buffer | undefined;

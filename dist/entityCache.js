@@ -14,7 +14,7 @@ const big_integer_1 = __importDefault(require("big-integer"));
 const perf_hooks_1 = require("perf_hooks");
 const cacheFileName = "cache.json";
 class EntityCache {
-    constructor({ dir, onSave, onGet } = {}) {
+    constructor({ dir, onSave, onGet, } = {}) {
         this._preparedEntities = {};
         this.cacheMap = new Map();
         if (dir) {
@@ -74,7 +74,7 @@ class EntityCache {
             catch (e) { }
         }
     }
-    get(item) {
+    async get(item) {
         if (item == undefined) {
             throw new Error("No cached entity for the given key");
         }
@@ -85,11 +85,11 @@ class EntityCache {
                 if (this.onGet) {
                     try {
                         const itemStr = item.toString();
-                        const rawItem = this.onGet(itemStr);
+                        const rawItem = await this.onGet(itemStr);
                         res = this.parseCacheEntity(itemStr, rawItem);
                     }
                     catch (error) {
-                        console.warn('[entityCache] get onGet lesser zero error', error);
+                        console.warn("[entityCache] get onGet lesser zero error", error);
                         res = this.cacheMap.get((0, Utils_1.getPeerId)(item).toString());
                     }
                 }
@@ -108,14 +108,14 @@ class EntityCache {
             if (this.onGet) {
                 try {
                     const itemStr = item.toString();
-                    const rawItem = this.onGet(itemStr);
+                    const rawItem = await this.onGet(itemStr);
                     const entity = this.parseCacheEntity(itemStr, rawItem);
                     if (entity) {
                         return entity;
                     }
                 }
                 catch (error) {
-                    console.warn('[entityCache] get onGet error', error);
+                    console.warn("[entityCache] get onGet error", error);
                 }
             }
             const result = this.cacheMap.get((0, Utils_1.getPeerId)(new cls({
@@ -167,7 +167,7 @@ class EntityCache {
                 if (key === "originalArgs")
                     continue;
                 switch (typeof entity[key]) {
-                    case 'object':
+                    case "object":
                         if (big_integer_1.default.isInstance(entity[key])) {
                             entityPrepared[key] = `bigInt:${entity[key].toString()}`;
                             break;
@@ -184,26 +184,24 @@ class EntityCache {
         return entity;
     }
     parseCacheEntity(entityId, entity) {
-        const parsedEntity = {};
-        if (typeof entity == "object") {
-            for (const key in entity) {
-                const value = entity[key];
-                switch (typeof value) {
-                    case 'string':
-                        if (value.startsWith("bigInt:")) {
-                            parsedEntity[key] = (0, big_integer_1.default)(value.replace("bigInt:", ""));
-                            break;
-                        }
-                        parsedEntity[key] = value;
+        const simplifiedEntity = {};
+        for (const key in entity) {
+            const value = entity[key];
+            switch (typeof value) {
+                case "string":
+                    if (value.startsWith("bigInt:")) {
+                        simplifiedEntity[key] = (0, big_integer_1.default)(value.replace("bigInt:", ""));
                         break;
-                    default:
-                        parsedEntity[key] = value;
-                        break;
-                }
+                    }
+                    simplifiedEntity[key] = value;
+                    break;
+                default:
+                    simplifiedEntity[key] = value;
+                    break;
             }
-            return (0, Utils_1.parseEntity)((0, Helpers_1.returnBigInt)(entityId), parsedEntity);
         }
-        return entity;
+        const parsedEntity = (0, Utils_1.parseEntity)((0, Helpers_1.returnBigInt)(entityId), simplifiedEntity);
+        return parsedEntity;
     }
 }
 exports.EntityCache = EntityCache;

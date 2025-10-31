@@ -255,7 +255,7 @@ class _MessagesIter extends requestIter_1.RequestIter {
     [Symbol.asyncIterator]() {
         return super[Symbol.asyncIterator]();
     }
-    _updateOffset(lastMessage, response) {
+    async _updateOffset(lastMessage, response) {
         if (!this.request) {
             throw new Error("Request not set yet");
         }
@@ -273,7 +273,8 @@ class _MessagesIter extends requestIter_1.RequestIter {
         }
         if (this.request instanceof tl_1.Api.messages.SearchGlobal) {
             if (lastMessage.inputChat) {
-                this.request.offsetPeer = lastMessage.inputChat;
+                const inputChat = await lastMessage.inputChat;
+                this.request.offsetPeer = inputChat;
             }
             else {
                 this.request.offsetPeer = new tl_1.Api.InputPeerEmpty();

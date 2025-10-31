@@ -112,24 +112,24 @@ class CustomMessage extends senderGetter_1.SenderGetter {
         super();
         this.init(args);
     }
-    _finishInit(client, entities, inputChat) {
+    async _finishInit(client, entities, inputChat) {
         this._client = client;
         const cache = client._entityCache;
         if (this.senderId) {
-            [this._sender, this._inputSender] = utils._getEntityPair(this.senderId.toString(), entities, cache);
+            [this._sender, this._inputSender] = await utils._getEntityPair(this.senderId.toString(), entities, cache);
         }
         if (this.chatId) {
-            [this._chat, this._inputChat] = utils._getEntityPair(this.chatId.toString(), entities, cache);
+            [this._chat, this._inputChat] = await utils._getEntityPair(this.chatId.toString(), entities, cache);
         }
         if (inputChat) {
             // This has priority
             this._inputChat = inputChat;
         }
         if (this.viaBotId) {
-            [this._viaBot, this._viaInputBot] = utils._getEntityPair(this.viaBotId.toString(), entities, cache);
+            [this._viaBot, this._viaInputBot] = await utils._getEntityPair(this.viaBotId.toString(), entities, cache);
         }
         if (this.fwdFrom) {
-            this._forward = new forward_1.Forward(this._client, this.fwdFrom, entities);
+            this._forward = new forward_1.Forward(this.fwdFrom);
         }
         if (this.action) {
             if (this.action instanceof api_1.Api.MessageActionChatAddUser ||
@@ -241,19 +241,24 @@ class CustomMessage extends senderGetter_1.SenderGetter {
      * Otherwise, it returns `undefined`.
      */
     get buttons() {
-        if (!this._buttons && this.replyMarkup) {
-            if (!this.inputChat) {
-                return;
+        return new Promise(async (resolve) => {
+            if (!this._buttons && this.replyMarkup) {
+                const inputChat = await this.inputChat;
+                if (!inputChat) {
+                    return;
+                }
+                try {
+                    this._neededMarkupBot().then((bot) => {
+                        this._setButtons(inputChat, bot);
+                        resolve(this._buttons);
+                    });
+                }
+                catch (e) {
+                    return;
+                }
             }
-            try {
-                const bot = this._neededMarkupBot();
-                this._setButtons(this.inputChat, bot);
-            }
-            catch (e) {
-                return;
-            }
-        }
-        return this._buttons;
+            resolve(this._buttons);
+        });
     }
     /**
      * Returns `buttons` when that property fails (this is rarely needed).
@@ -265,11 +270,11 @@ class CustomMessage extends senderGetter_1.SenderGetter {
                 return;
             let bot;
             try {
-                bot = this._neededMarkupBot();
+                bot = await this._neededMarkupBot();
             }
             catch (e) {
                 await this._reloadMessage();
-                bot = this._neededMarkupBot();
+                bot = await this._neededMarkupBot();
             }
             this._setButtons(chat, bot);
         }
@@ -573,8 +578,9 @@ class CustomMessage extends senderGetter_1.SenderGetter {
                 }
             }
             const options = findPoll(this.poll.poll.answers) || [];
+            const inputChat = await this.inputChat;
             return await this.client.invoke(new api_1.Api.messages.SendVote({
-                peer: this.inputChat,
+                peer: inputChat,
                 msgId: this.id,
                 options: options,
             }));
@@ -660,7 +666,7 @@ class CustomMessage extends senderGetter_1.SenderGetter {
      to know what bot we want to start. Raises ``Error`` if the bot
      cannot be found but is needed. Returns `None` if it's not needed.
      */
-    _neededMarkupBot() {
+    async _neededMarkupBot() {
         if (!this.client || this.replyMarkup == undefined) {
             return;
         }
@@ -678,7 +684,7 @@ class CustomMessage extends senderGetter_1.SenderGetter {
                         return bot;
                     }
                     else {
-                        const ent = this.client._entityCache.get(this.viaBotId);
+                        const ent = await this.client._entityCache.get(this.viaBotId);
                         if (!ent)
                             throw new Error("No input sender");
                         return ent;

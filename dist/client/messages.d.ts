@@ -26,7 +26,7 @@ export declare class _MessagesIter extends RequestIter {
     _loadNextChunk(): Promise<true | undefined>;
     _messageInRange(message: Api.Message): boolean;
     [Symbol.asyncIterator](): AsyncIterator<Api.Message, any, undefined>;
-    _updateOffset(lastMessage: Api.Message, response: any): void;
+    _updateOffset(lastMessage: Api.Message, response: any): Promise<void>;
 }
 interface IDsIterInterface {
     entity: EntityLike;

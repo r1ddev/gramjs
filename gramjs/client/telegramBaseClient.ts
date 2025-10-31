@@ -10,7 +10,7 @@ import { Api } from "../tl";
 
 import os from "./os";
 import type { AuthKey } from "../crypto/AuthKey";
-import { EntityCache, PreparedEntity } from "../entityCache";
+import { CacheEntityOnGet, CacheEntityOnSave, EntityCache, PreparedEntity } from "../entityCache";
 import type { ParseInterface } from "./messageParse";
 import type { EventBuilder } from "../events/common";
 import { MarkdownParser } from "../extensions/markdown";
@@ -136,8 +136,8 @@ export interface TelegramClientParams {
      */
     cache?: {
         dir?: string,
-        onSave?: (peerId: string, peer: PreparedEntity) => void,
-        onGet?: (peerId: string) => PreparedEntity,
+        onSave?: CacheEntityOnSave,
+        onGet?: CacheEntityOnGet,
     };
 }
 

@@ -42,17 +42,23 @@ class ChatGetter {
         return this._chat;
     }
     get inputChat() {
-        if (!this._inputChat && this._chatPeer && this._client) {
-            try {
-                this._inputChat = this._client._entityCache.get(__1.utils.getPeerId(this._chatPeer));
+        return new Promise((resolve, reject) => {
+            if (!this._inputChat && this._chatPeer && this._client) {
+                this._client._entityCache
+                    .get(__1.utils.getPeerId(this._chatPeer))
+                    .then((entity) => {
+                    this._inputChat = entity;
+                    resolve(this._inputChat);
+                })
+                    .catch(() => { });
             }
-            catch (e) { }
-        }
-        return this._inputChat;
+            resolve(this._inputChat);
+        });
     }
     async getInputChat() {
         var _a, e_1, _b, _c;
-        if (!this.inputChat && this.chatId && this._client) {
+        const inputChat = await this.inputChat;
+        if (!inputChat && this.chatId && this._client) {
             try {
                 const target = this.chatId;
                 try {
