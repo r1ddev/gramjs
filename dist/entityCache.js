@@ -16,9 +16,12 @@ const cacheFileName = "cache.json";
 class EntityCache {
     constructor({ dir, onSave, onGet, } = {}) {
         this._preparedEntities = {};
+        this._cacheType = "map";
         this.cacheMap = new Map();
-        if (dir) {
-            this.initCache(dir);
+        console.log('conts dir', dir);
+        // if both onSave and onGet are provided, cashe will be only callback
+        if (onSave && onGet) {
+            this._cacheType = "callback";
         }
         if (onSave) {
             this.onSave = onSave;
@@ -26,16 +29,28 @@ class EntityCache {
         if (onGet) {
             this.onGet = onGet;
         }
+        // if dir is provided, cashe will be only dir and map
+        if (dir) {
+            this._cacheType = "file";
+            this.initCache(dir);
+        }
+        setInterval(() => {
+            console.log(this.cacheMap);
+        }, 3000);
     }
     initCache(cacheDir) {
-        if (!fs_1.default.existsSync(cacheDir)) {
-            fs_1.default.mkdirSync(cacheDir, { recursive: true });
+        console.log('call this._cacheType', this._cacheType);
+        if (this._cacheType === "file") {
+            if (!fs_1.default.existsSync(cacheDir)) {
+                fs_1.default.mkdirSync(cacheDir, { recursive: true });
+            }
+            this._cacheFile = path_1.default.join(cacheDir, cacheFileName);
+            console.log('this._cacheFile', this._cacheFile);
+            if (!fs_1.default.existsSync(this._cacheFile)) {
+                fs_1.default.writeFileSync(this._cacheFile, "{}", "utf-8");
+            }
+            this.restore();
         }
-        this._cacheFile = path_1.default.join(cacheDir, cacheFileName);
-        if (!fs_1.default.existsSync(this._cacheFile)) {
-            fs_1.default.writeFileSync(this._cacheFile, "{}", "utf-8");
-        }
-        this.restore();
     }
     add(entities) {
         var _a;
@@ -66,9 +81,16 @@ class EntityCache {
                 const pid = (0, Utils_1.getPeerId)(entity);
                 if (!this.cacheMap.has(pid.toString())) {
                     const peer = (0, Utils_1.getInputPeer)(entity);
-                    this.cacheMap.set(pid.toString(), peer);
-                    this.saveEntity(pid.toString(), peer);
-                    (_a = this.onSave) === null || _a === void 0 ? void 0 : _a.call(this, pid.toString(), this.prepareEntity(peer));
+                    // if we have a onsave call it
+                    if (this.onSave) {
+                        (_a = this.onSave) === null || _a === void 0 ? void 0 : _a.call(this, pid.toString(), this.prepareEntity(peer));
+                    }
+                    // if cashe type is not callback (onget and onsave are provided)
+                    // save to map and file if necessary
+                    if (this._cacheType !== "callback") {
+                        this.cacheMap.set(pid.toString(), peer);
+                        this.saveEntity(pid.toString(), peer);
+                    }
                 }
             }
             catch (e) { }

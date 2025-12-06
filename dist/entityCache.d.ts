@@ -9,6 +9,7 @@ export declare class EntityCache {
     private _preparedEntities;
     private onSave;
     private onGet;
+    private _cacheType;
     constructor({ dir, onSave, onGet, }?: {
         dir?: string;
         onSave?: CacheEntityOnSave;

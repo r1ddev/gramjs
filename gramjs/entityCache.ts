@@ -17,6 +17,7 @@ export type CacheEntityOnSave = (peerId: string, peer: PreparedEntity) => void;
 export type CacheEntityOnGet = (
     peerId: string
 ) => PreparedEntity | Promise<PreparedEntity>;
+type CacheType = "map" | "file" | "callback";
 
 export class EntityCache {
     private cacheMap: Map<string, any>;
@@ -24,6 +25,8 @@ export class EntityCache {
     private _preparedEntities: Record<string, PreparedEntity> = {};
     private onSave: CacheEntityOnSave | undefined;
     private onGet: CacheEntityOnGet | undefined;
+
+    private _cacheType: CacheType = "map";
 
     constructor({
         dir,
@@ -38,8 +41,11 @@ export class EntityCache {
         | undefined = {}) {
         this.cacheMap = new Map();
 
-        if (dir) {
-            this.initCache(dir);
+        console.log('conts dir', dir);
+        
+        // if both onSave and onGet are provided, cashe will be only callback
+        if (onSave && onGet) {
+            this._cacheType = "callback";
         }
 
         if (onSave) {
@@ -49,20 +55,37 @@ export class EntityCache {
         if (onGet) {
             this.onGet = onGet;
         }
+
+        // if dir is provided, cashe will be only dir and map
+        if (dir) {
+            this._cacheType = "file";
+            this.initCache(dir);
+        }
+
+        setInterval(() => {
+            console.log(this.cacheMap);  
+        }, 3000);
     }
 
     initCache(cacheDir: string) {
-        if (!fs.existsSync(cacheDir)) {
-            fs.mkdirSync(cacheDir, { recursive: true });
+        console.log('call this._cacheType', this._cacheType);
+        
+        if (this._cacheType === "file") {
+            if (!fs.existsSync(cacheDir)) {
+                fs.mkdirSync(cacheDir, { recursive: true });
+            }
+
+            this._cacheFile = path.join(cacheDir, cacheFileName);
+
+            console.log('this._cacheFile', this._cacheFile);
+            
+
+            if (!fs.existsSync(this._cacheFile)) {
+                fs.writeFileSync(this._cacheFile, "{}", "utf-8");
+            }
+
+            this.restore();   
         }
-
-        this._cacheFile = path.join(cacheDir, cacheFileName);
-
-        if (!fs.existsSync(this._cacheFile)) {
-            fs.writeFileSync(this._cacheFile, "{}", "utf-8");
-        }
-
-        this.restore();
     }
 
     add(entities: any) {
@@ -92,9 +115,18 @@ export class EntityCache {
                 const pid = getPeerId(entity);
                 if (!this.cacheMap.has(pid.toString())) {
                     const peer = getInputPeer(entity);
-                    this.cacheMap.set(pid.toString(), peer);
-                    this.saveEntity(pid.toString(), peer);
-                    this.onSave?.(pid.toString(), this.prepareEntity(peer));
+
+                    // if we have a onsave call it
+                    if (this.onSave) {
+                        this.onSave?.(pid.toString(), this.prepareEntity(peer));
+                    }
+
+                    // if cashe type is not callback (onget and onsave are provided)
+                    // save to map and file if necessary
+                    if (this._cacheType !== "callback") {
+                        this.cacheMap.set(pid.toString(), peer);
+                        this.saveEntity(pid.toString(), peer);
+                    }
                 }
             } catch (e) {}
         }
